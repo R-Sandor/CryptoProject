@@ -1,5 +1,7 @@
 <template>
-  <LineChartVue />
+  <div class="chart-container" style="position: relative; height: 40vh; width: 80vw">
+    <LineChartVue />
+  </div>
 </template>
 
 <script>
@@ -21,5 +23,12 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.chart-container {
+  position: relative;
+  margin: auto;
+  height: 40vh;
+  width: 38vw;
 }
 </style>
