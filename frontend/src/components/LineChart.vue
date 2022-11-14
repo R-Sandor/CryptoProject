@@ -52,11 +52,11 @@ export default {
     },
     width: {
       type: Number,
-      default: 200,
+      default: 400,
     },
     height: {
       type: Number,
-      default: 200,
+      default: 400,
     },
     cssClasses: {
       default: "",
@@ -83,6 +83,7 @@ export default {
       },
       chartOptions: {
         responsive: true,
+        maintainAspectRatio: false,
       },
     };
   },
