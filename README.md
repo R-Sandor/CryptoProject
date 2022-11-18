@@ -12,4 +12,4 @@ Cryptography for cybersecurity Final Project
 # To run locally Call the utility start up script
 ./startCrypto 
 
-# Navigate to http://localhost:808
+Navigate to http://localhost:8080
