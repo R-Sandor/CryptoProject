@@ -1,5 +1,7 @@
 package dev.findfirst.CryptoProjectFinal.crypto;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -83,5 +85,30 @@ public class KeyGenerator {
     return new KeysRec(kpub, kpriv, alpha, p);
   }
 
+  public BigKeys generateBigKeys(long alpha, int keySize) {
+    SecureRandom rnd = new SecureRandom();
+    BigInteger tmp;
+    BigInteger a = BigInteger.valueOf(alpha);
+    BigInteger p = BigInteger.probablePrime(keySize, rnd);
+    BigInteger kpriv = BigInteger.probablePrime(keySize, rnd);
+    BigInteger kpub = a.modPow(kpriv, p);
+
+    int comp = kpriv.compareTo(p.subtract(BigInteger.TWO));
+    // If kpriv and p are equal then subtract 2 from kpriv.
+    if (comp == 0) {
+      kpriv = kpriv.subtract(BigInteger.TWO);
+    }
+    // if kpriv is greater than p
+    // swap them, take the space to time trade off and use a tmp.
+    else if (comp > 0) {
+      tmp = kpriv;
+      kpriv = p;
+      p = tmp;
+    }
+    return new BigKeys(kpub, kpriv, a, p);
+  }
+
   public record KeysRec(long kpub, long kpriv, long a, long p) {}
+
+  public record BigKeys(BigInteger kpub, BigInteger kpriv, BigInteger a, BigInteger p) {}
 }

@@ -1,8 +1,8 @@
 package dev.findfirst.CryptoProjectFinal.crypto.diffiehellman;
 
+import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.BigKeys;
 import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.KeysRec;
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -82,32 +82,16 @@ public class BabyStepGiaintStep {
     return System.currentTimeMillis() - start;
   }
 
-  public long bigKeyDiscrete(long alpha, int bitLength) {
+  public long solveTimer(BigKeys keysRec) {
     long start = System.currentTimeMillis();
-    SecureRandom rnd = new SecureRandom();
-    BigInteger tmp;
-    BigInteger a = BigInteger.valueOf(alpha);
-    BigInteger p = BigInteger.probablePrime(bitLength, rnd);
-    BigInteger kpriv = BigInteger.probablePrime(bitLength, rnd);
-    BigInteger kpub = a.modPow(kpriv, p);
+    String x = bigKeyDiscrete(keysRec.kpub(), keysRec.kpriv(), keysRec.a(), keysRec.p());
+    log.debug("Key Found: {}", x);
+    return System.currentTimeMillis() - start;
+  }
 
-    int comp = kpriv.compareTo(p.subtract(BigInteger.TWO));
-    // If kpriv and p are equal then subtract 2 from kpriv.
-    if (comp == 0) {
-      kpriv = kpriv.subtract(BigInteger.TWO);
-    }
-    // if kpriv is greater than p
-    // swap them, take the space to time trade off and use a tmp.
-    else if (comp > 0) {
-      tmp = kpriv;
-      kpriv = p;
-      p = tmp;
-    }
-
+  public String bigKeyDiscrete(BigInteger kpub, BigInteger kpriv, BigInteger a, BigInteger p) {
     BigInteger m = p.subtract(BigInteger.ONE).sqrt();
-
     Map<BigInteger, BigInteger> lookup = new HashMap<>();
-
     log.debug("a {}, b {}, p {}, privKey {}", a, kpub, p, kpriv);
     // Store all values of a^(m*i) of LHS.
     // I really think of this as the right hand side of the equation: alpha^
@@ -131,11 +115,10 @@ public class BabyStepGiaintStep {
         BigInteger val = i.multiply(m).add(lookup.get(y));
         log.debug("Collisions {}", val);
         if (val.equals(kpriv)) {
-          log.debug("Keyfound {}", val.toString());
-          break;
+          return val.toString();
         }
       }
     }
-    return System.currentTimeMillis() - start;
+    return "-1";
   }
 }
