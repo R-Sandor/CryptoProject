@@ -9,11 +9,22 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-/** Baby Step Gaint step is an attack used against Diffie-Hellman/Algamal Crypto Systems. */
+/**
+ * Baby Step Gaint step is an attack used against Diffie-Hellman/Algamal Crypto Systems. There are
+ * two versions of the mode. Small keys that doesn't require BigInteger.
+ */
 @Component
 @Slf4j
 public class BabyStepGiaintStep implements SolveTimer {
 
+  /**
+   * This is the same thing a BigIntegers modPow.
+   *
+   * @param a the base.
+   * @param b the exponent
+   * @param p the mod p.
+   * @return a^m mod p
+   */
   private long fastMod(long a, long b, long p) {
     long retVal = 1; // Initialize result
     a = a % p; // Update x if it is more than or equal to p
@@ -28,6 +39,15 @@ public class BabyStepGiaintStep implements SolveTimer {
     return retVal;
   }
 
+  /**
+   * Small key Baby Step Gaint Step
+   *
+   * @param a the base
+   * @param kpub public key
+   * @param p mod p parameter
+   * @param kpriv private key
+   * @return the value of the found key.
+   */
   private long discreteLogarithm(long a, long kpub, long p, long kpriv) {
     int m = (int) Math.ceil((Math.sqrt(p - 1)));
 
@@ -71,9 +91,7 @@ public class BabyStepGiaintStep implements SolveTimer {
   /**
    * Calculates the time it takes to solve for x using Baby Step Giant Step
    *
-   * @param a
-   * @param b
-   * @param p
+   * @param KeysRec small keys record.
    * @return return solve time
    */
   public long solveTime(KeysRec keysRec) {
@@ -86,8 +104,8 @@ public class BabyStepGiaintStep implements SolveTimer {
   /**
    * Handles keys larger than 2^30.
    *
-   * @param keysRec
-   * @return
+   * @param keysRec public keys and encryption parametes
+   * @return solve time in milliseconds.
    */
   @Override
   public long solveTime(BigKeys keysRec) {
@@ -97,6 +115,15 @@ public class BabyStepGiaintStep implements SolveTimer {
     return System.currentTimeMillis() - start;
   }
 
+  /**
+   * Solve the DLP using Baby Step Gain Step using keys larger than 2^30
+   *
+   * @param kpub public key
+   * @param kpriv private key
+   * @param a base
+   * @param p parameter
+   * @return value of the found private key.
+   */
   public String bigKeyDiscrete(BigInteger kpub, BigInteger kpriv, BigInteger a, BigInteger p) {
     BigInteger m = p.subtract(BigInteger.ONE).sqrt();
     Map<BigInteger, BigInteger> lookup = new HashMap<>();
