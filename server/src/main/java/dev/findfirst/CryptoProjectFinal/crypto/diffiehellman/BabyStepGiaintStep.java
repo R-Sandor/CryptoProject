@@ -1,8 +1,8 @@
 package dev.findfirst.CryptoProjectFinal.crypto.diffiehellman;
 
-import dev.findfirst.CryptoProjectFinal.crypto.SolveTimer;
 import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.BigKeys;
 import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.KeysRec;
+import dev.findfirst.CryptoProjectFinal.crypto.SolveTimer;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,7 +84,8 @@ public class BabyStepGiaintStep implements SolveTimer {
   }
 
   /**
-   * Handles keys larger than 2^30.  
+   * Handles keys larger than 2^30.
+   *
    * @param keysRec
    * @return
    */

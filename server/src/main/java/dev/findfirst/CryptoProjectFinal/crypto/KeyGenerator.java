@@ -110,5 +110,6 @@ public class KeyGenerator {
 
   public record KeysRec(long kpub, long kpriv, long a, long p) {}
 
-  public record BigKeys(BigInteger kpub, BigInteger kpriv, BigInteger a, BigInteger p, int bitsize) {}
+  public record BigKeys(
+      BigInteger kpub, BigInteger kpriv, BigInteger a, BigInteger p, int bitsize) {}
 }

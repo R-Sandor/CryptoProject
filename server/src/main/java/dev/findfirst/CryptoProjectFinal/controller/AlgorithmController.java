@@ -31,7 +31,7 @@ public class AlgorithmController {
     // return babyStep.solveTimer(new KeysRec(39327, 62927, 5, 65521));
   }
 
-@RequestMapping(
+  @RequestMapping(
       value = "/bruteforce/{alpha}/{keysize}",
       method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_VALUE)
@@ -40,5 +40,4 @@ public class AlgorithmController {
     return babyStep.solveTime(keyGen.generateKeys(alpha, keysize));
     // return babyStep.solveTimer(new KeysRec(39327, 62927, 5, 65521));
   }
-
 }
