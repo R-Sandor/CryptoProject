@@ -1,7 +1,7 @@
 package dev.findfirst.CryptoProjectFinal.controller;
 
-import dev.findfirst.CryptoProjectFinal.crypto.BabyStepGiaintStep;
 import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator;
+import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.BabyStepGiaintStep;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

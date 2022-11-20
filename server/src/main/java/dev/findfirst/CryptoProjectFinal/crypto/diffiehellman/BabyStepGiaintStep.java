@@ -1,13 +1,12 @@
-package dev.findfirst.CryptoProjectFinal.crypto;
+package dev.findfirst.CryptoProjectFinal.crypto.diffiehellman;
 
+import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.KeysRec;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.KeysRec;
 
 /** Baby Step Gaint step is an attack used against Diffie-Hellman/Algamal Crypto Systems. */
 @Component
@@ -131,7 +130,7 @@ public class BabyStepGiaintStep {
       if (lookup.getOrDefault(y, BigInteger.ZERO).compareTo(BigInteger.ZERO) > 0) {
         BigInteger val = i.multiply(m).add(lookup.get(y));
         log.debug("Collisions {}", val);
-        if (val.equals(kpriv)) { 
+        if (val.equals(kpriv)) {
           log.debug("Keyfound {}", val.toString());
           break;
         }
