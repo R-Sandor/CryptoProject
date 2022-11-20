@@ -4,7 +4,10 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class KeyGenerator {
 
   public long genRandomInBitSize(int keySize) {
@@ -89,9 +92,9 @@ public class KeyGenerator {
     SecureRandom rnd = new SecureRandom();
     BigInteger tmp;
     BigInteger a = BigInteger.valueOf(alpha);
+    log.debug("a {}", a);
     BigInteger p = BigInteger.probablePrime(keySize, rnd);
     BigInteger kpriv = BigInteger.probablePrime(keySize, rnd);
-    BigInteger kpub = a.modPow(kpriv, p);
 
     int comp = kpriv.compareTo(p.subtract(BigInteger.TWO));
     // If kpriv and p are equal then subtract 2 from kpriv.
@@ -105,6 +108,9 @@ public class KeyGenerator {
       kpriv = p;
       p = tmp;
     }
+    BigInteger kpub = a.modPow(kpriv, p);
+    log.debug("kpub {}", kpub);
+
     return new BigKeys(kpub, kpriv, a, p, keySize);
   }
 
