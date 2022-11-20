@@ -1,5 +1,6 @@
 package dev.findfirst.CryptoProjectFinal.crypto.diffiehellman;
 
+import dev.findfirst.CryptoProjectFinal.crypto.SolveTimer;
 import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.BigKeys;
 import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.KeysRec;
 import java.math.BigInteger;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 /** Baby Step Gaint step is an attack used against Diffie-Hellman/Algamal Crypto Systems. */
 @Component
 @Slf4j
-public class BabyStepGiaintStep {
+public class BabyStepGiaintStep implements SolveTimer {
 
   private long fastMod(long a, long b, long p) {
     long retVal = 1; // Initialize result
@@ -75,14 +76,20 @@ public class BabyStepGiaintStep {
    * @param p
    * @return return solve time
    */
-  public long solveTimer(KeysRec keysRec) {
+  public long solveTime(KeysRec keysRec) {
     long start = System.currentTimeMillis();
     long x = discreteLogarithm(keysRec.a(), keysRec.kpub(), keysRec.p(), keysRec.kpriv());
     log.debug("Key Found: {}", x);
     return System.currentTimeMillis() - start;
   }
 
-  public long solveTimer(BigKeys keysRec) {
+  /**
+   * Handles keys larger than 2^30.  
+   * @param keysRec
+   * @return
+   */
+  @Override
+  public long solveTime(BigKeys keysRec) {
     long start = System.currentTimeMillis();
     String x = bigKeyDiscrete(keysRec.kpub(), keysRec.kpriv(), keysRec.a(), keysRec.p());
     log.debug("Key Found: {}", x);

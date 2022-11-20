@@ -105,10 +105,10 @@ public class KeyGenerator {
       kpriv = p;
       p = tmp;
     }
-    return new BigKeys(kpub, kpriv, a, p);
+    return new BigKeys(kpub, kpriv, a, p, keySize);
   }
 
   public record KeysRec(long kpub, long kpriv, long a, long p) {}
 
-  public record BigKeys(BigInteger kpub, BigInteger kpriv, BigInteger a, BigInteger p) {}
+  public record BigKeys(BigInteger kpub, BigInteger kpriv, BigInteger a, BigInteger p, int bitsize) {}
 }
