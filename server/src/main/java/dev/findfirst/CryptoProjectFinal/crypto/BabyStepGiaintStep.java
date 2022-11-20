@@ -1,12 +1,13 @@
-package dev.findfirst.CryptoProjectFinal.service;
+package dev.findfirst.CryptoProjectFinal.crypto;
 
-import dev.findfirst.CryptoProjectFinal.utility.KeyGenerator.KeysRec;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.KeysRec;
 
 /** Baby Step Gaint step is an attack used against Diffie-Hellman/Algamal Crypto Systems. */
 @Component
@@ -75,20 +76,6 @@ public class BabyStepGiaintStep {
    * @param p
    * @return return solve time
    */
-  public long solveTimer(int a, int b, int p, int privKey) {
-    long start = System.currentTimeMillis();
-    long x = discreteLogarithm(a, b, p, privKey);
-    return System.currentTimeMillis() - start;
-  }
-
-  /**
-   * Calculates the time it takes to solve for x using Baby Step Giant Step
-   *
-   * @param a
-   * @param b
-   * @param p
-   * @return return solve time
-   */
   public long solveTimer(KeysRec keysRec) {
     long start = System.currentTimeMillis();
     long x = discreteLogarithm(keysRec.a(), keysRec.kpub(), keysRec.p(), keysRec.kpriv());
@@ -144,15 +131,6 @@ public class BabyStepGiaintStep {
       if (lookup.getOrDefault(y, BigInteger.ZERO).compareTo(BigInteger.ZERO) > 0) {
         BigInteger val = i.multiply(m).add(lookup.get(y));
         log.debug("Collisions {}", val);
-        /*
-         * This is a simism. As there possible collisions.
-         * For example 5^13787 and 5^62927 mod 65221 both provide
-         * the public key of 39327.
-         *
-         * In reality one would need to check if
-         * the private key when raised to the power of a given public
-         * key creates the session key.
-         */
         if (val.equals(kpriv)) { 
           log.debug("Keyfound {}", val.toString());
           break;

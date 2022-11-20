@@ -1,4 +1,4 @@
-package dev.findfirst.CryptoProjectFinal.utility;
+package dev.findfirst.CryptoProjectFinal.crypto;
 
 import java.util.ArrayList;
 import java.util.List;

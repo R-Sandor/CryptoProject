@@ -1,4 +1,4 @@
-package dev.findfirst.CryptoProjectFinal.utility;
+package dev.findfirst.CryptoProjectFinal.crypto;
 
 import org.springframework.stereotype.Component;
 
