@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeyGenerator {
 
-  public int genRandomInBitSize(int keySize) {
+  public long genRandomInBitSize(int keySize) {
     --keySize; // accounting the operator applied to the base.
-    int max = 2 << keySize;
-    int min = (2 << keySize - 1) + 1;
-    return (int) ((Math.random() * (max - min)) + min);
+    long max = 2 << keySize;
+    long min = (2 << keySize - 1) + 1;
+    return (long) ((Math.random() * (max - min)) + min);
   }
 
   /**
@@ -18,23 +18,23 @@ public class KeyGenerator {
    * @param keySize the bit size
    * @return a valid priv prime value
    */
-  public int genDprime(int keySize, int max) {
+  public long genDprime(int keySize, long p) {
     --keySize; // accounting the operator applied to the base.
-    int pMinus2 = max - 2;
-    int min = (2 << keySize - 1) + 1;
-    return (int) ((Math.random() * (pMinus2 - min)) + min);
+    long pMinus2 = p - 2;
+    long min = (2 << keySize - 1) + 1;
+    return (long) ((Math.random() * (pMinus2 - min)) + min);
   }
 
-  public long fastMod(long c, int y, int p) {
+  public long fastMod(long c, long l, long pt) {
     long retVal = 1; // Initialize result
-    c = c % p; // Update c if it is more than or equal to p
-    while (y > 0) {
+    c = c % pt; // Update c if it is more than or equal to p
+    while (l > 0) {
       // If y is odd, multiply x with result
-      if ((y & 1) > 0) retVal = (retVal * c) % p;
+      if ((l & 1) > 0) retVal = (retVal * c) % pt;
 
       // y must be even now
-      y = y >> 1; // y = y/2
-      c = (c * c) % p;
+      l = l >> 1; // y = y/2
+      c = (c * c) % pt;
     }
     return retVal;
   }
@@ -46,8 +46,8 @@ public class KeyGenerator {
    * @param s security paramater
    * @return if it likely a prime
    */
-  public boolean primeTest(int pt, int s) {
-    long z = fastMod(2, pt - 1, pt);
+  public boolean primeTest(long pt, int s) {
+    long z = fastMod(2l, pt - 1, pt);
     if (z == 1) return true;
     for (int i = 0; i < s - 1; i++) {
       if (z == pt - 1) return true;
@@ -63,8 +63,8 @@ public class KeyGenerator {
    * @param primeSize
    * @return
    */
-  public int generatePrime(int primeSize) {
-    int prime = genRandomInBitSize(primeSize);
+  public long generatePrime(int primeSize) {
+    long prime = genRandomInBitSize(primeSize);
     while (!primeTest(prime, 4)) {
       prime = genRandomInBitSize(primeSize);
     }
@@ -76,12 +76,12 @@ public class KeyGenerator {
    *
    * @param keySize key size in bits
    */
-  public KeysRec generateKeys(int alpha, int keySize) {
-    int p = generatePrime(keySize);
-    int kpriv = genDprime(keySize, p);
+  public KeysRec generateKeys(long alpha, int keySize) {
+    long p = generatePrime(keySize);
+    long kpriv = genDprime(keySize, p);
     long kpub = fastMod(alpha, kpriv, p);
     return new KeysRec(kpub, kpriv, alpha, p);
   }
 
-  public record KeysRec(long kpub, int kpriv, int a, int p) {}
+  public record KeysRec(long kpub, long kpriv, long a, long p) {}
 }

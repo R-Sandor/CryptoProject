@@ -36,7 +36,7 @@ class CryptoProjectFinalApplicationTests {
 
   @Test
   void findPrimeForBitSize() {
-    int priKey = keyGen.genRandomInBitSize(16);
+    long priKey = keyGen.genRandomInBitSize(16);
     while (!keyGen.primeTest(priKey, 4)) {
       priKey = keyGen.genRandomInBitSize(16);
     }

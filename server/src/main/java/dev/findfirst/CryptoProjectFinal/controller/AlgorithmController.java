@@ -22,7 +22,11 @@ public class AlgorithmController {
       value = "/babyStep/{alpha}/{keysize}",
       method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public long getBabyStepPerformance(@PathVariable int alpha, @PathVariable int keysize) {
+  public long getBabyStepPerformance(@PathVariable long alpha, @PathVariable int keysize) {
+    // if the bit size is greater than 31 bits then BigIntegers need to be used.
+    if (keysize > 30) {
+      return babyStep.bigKeyDiscrete(alpha, keysize);
+    }
     return babyStep.solveTimer(keyGen.generateKeys(alpha, keysize));
     // return babyStep.solveTimer(new KeysRec(39327, 62927, 5, 65521));
   }

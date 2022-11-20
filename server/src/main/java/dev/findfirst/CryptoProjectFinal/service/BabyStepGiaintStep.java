@@ -1,6 +1,8 @@
 package dev.findfirst.CryptoProjectFinal.service;
 
 import dev.findfirst.CryptoProjectFinal.utility.KeyGenerator.KeysRec;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -11,43 +13,45 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class BabyStepGiaintStep {
 
-  private long fastMod(long c, int y, int p) {
+  private long fastMod(long a, long b, long p) {
     long retVal = 1; // Initialize result
-    c = c % p; // Update x if it is more than or equal to p
-    while (y > 0) {
+    a = a % p; // Update x if it is more than or equal to p
+    while (b > 0) {
       // If y is odd, multiply x with result
-      if ((y & 1) > 0) retVal = (retVal * c) % p;
+      if ((b & 1) > 0) retVal = (retVal * a) % p;
 
       // y must be even now
-      y = y >> 1; // y = y/2
-      c = (c * c) % p;
+      b = b >> 1; // y = y/2
+      a = (a * a) % p;
     }
     return retVal;
   }
 
-  private long discreteLogarithm(int a, long l, int p, int privKey) {
-    int m = (int) (Math.sqrt(p - 1));
+  private long discreteLogarithm(long a, long kpub, long p, long kpriv) {
+    int m = (int) Math.ceil((Math.sqrt(p - 1)));
 
-    Map<Long, Long> lookup = new HashMap<>();
-    // Store all values of a^(m*i) of LHS --
+    Map<Long, Integer> lookup = new HashMap<>();
+
+    log.debug("a {}, b {}, p {}, privKey {}", a, kpub, p, kpriv);
+    // Store all values of a^(m*i) of LHS.
     // I really think of this as the right hand side of the equation: alpha^
     long cur = 1;
-    for (long i = 0; i < m; i++) {
+    for (int i = 0; i < m; i++) {
       lookup.put(cur, i);
       cur = (cur * a) % p;
     }
 
     // find a^-m
     // fermat's little theorem to find the inverse!
-    long c = fastMod(a, m * (p - 2), p);
+    long mInv = fastMod(a, m * (p - 2), p);
 
     for (int i = 0; i < m; i++) {
       // Calculate (a^-m)xg * b and check
       // for collision
-      long y = (l * (fastMod(c, i, p))) % p;
-      if (lookup.getOrDefault(y, 0l) > 0) {
+      long y = (kpub * (fastMod(mInv, i, p))) % p;
+      if (lookup.getOrDefault(y, 0) > 0) {
         long val = i * m + lookup.get(y);
-        log.debug("val {}", val);
+        log.debug("Collisions {}", val);
         /*
          * This is a simism. As there possible collisions.
          * For example 5^13787 and 5^62927 mod 65221 both provide
@@ -57,7 +61,7 @@ public class BabyStepGiaintStep {
          * the private key when raised to the power of a given public
          * key creates the session key.
          */
-        if (val == privKey) return val;
+        if (val == kpriv) return val;
       }
     }
     return -1;
@@ -88,7 +92,73 @@ public class BabyStepGiaintStep {
   public long solveTimer(KeysRec keysRec) {
     long start = System.currentTimeMillis();
     long x = discreteLogarithm(keysRec.a(), keysRec.kpub(), keysRec.p(), keysRec.kpriv());
-    log.debug("x {}", x);
+    log.debug("Key Found: {}", x);
+    return System.currentTimeMillis() - start;
+  }
+
+  public long bigKeyDiscrete(long alpha, int bitLength) {
+    long start = System.currentTimeMillis();
+    SecureRandom rnd = new SecureRandom();
+    BigInteger tmp;
+    BigInteger a = BigInteger.valueOf(alpha);
+    BigInteger p = BigInteger.probablePrime(bitLength, rnd);
+    BigInteger kpriv = BigInteger.probablePrime(bitLength, rnd);
+    BigInteger kpub = a.modPow(kpriv, p);
+
+    int comp = kpriv.compareTo(p.subtract(BigInteger.TWO));
+    // If kpriv and p are equal then subtract 2 from kpriv.
+    if (comp == 0) {
+      kpriv = kpriv.subtract(BigInteger.TWO);
+    }
+    // if kpriv is greater than p
+    // swap them, take the space to time trade off and use a tmp.
+    else if (comp > 0) {
+      tmp = kpriv;
+      kpriv = p;
+      p = tmp;
+    }
+
+    BigInteger m = p.subtract(BigInteger.ONE).sqrt();
+
+    Map<BigInteger, BigInteger> lookup = new HashMap<>();
+
+    log.debug("a {}, b {}, p {}, privKey {}", a, kpub, p, kpriv);
+    // Store all values of a^(m*i) of LHS.
+    // I really think of this as the right hand side of the equation: alpha^
+    BigInteger cur = BigInteger.ONE;
+    for (BigInteger i = BigInteger.ZERO; i.compareTo(m) < 0; i = i.add(BigInteger.ONE)) {
+      lookup.put(cur, i);
+      cur = cur.multiply(a).mod(p);
+    }
+
+    // find a^-m
+    // fermat's little theorem to find the inverse!
+    BigInteger fermats = m.multiply(p.subtract(BigInteger.TWO));
+    // same thing as the fastMod for the smaller keys
+    BigInteger mInv = a.modPow(fermats, p);
+
+    for (BigInteger i = BigInteger.ZERO; i.compareTo(m) < 0; i = i.add(BigInteger.ONE)) {
+      // Calculate (a^-m)xg * b and check
+      // for collision
+      BigInteger y = kpub.multiply(mInv.modPow(i, p)).mod(p);
+      if (lookup.getOrDefault(y, BigInteger.ZERO).compareTo(BigInteger.ZERO) > 0) {
+        BigInteger val = i.multiply(m).add(lookup.get(y));
+        log.debug("Collisions {}", val);
+        /*
+         * This is a simism. As there possible collisions.
+         * For example 5^13787 and 5^62927 mod 65221 both provide
+         * the public key of 39327.
+         *
+         * In reality one would need to check if
+         * the private key when raised to the power of a given public
+         * key creates the session key.
+         */
+        if (val.equals(kpriv)) { 
+          log.debug("Keyfound {}", val.toString());
+          break;
+        }
+      }
+    }
     return System.currentTimeMillis() - start;
   }
 }
