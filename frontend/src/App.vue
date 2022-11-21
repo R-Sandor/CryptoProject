@@ -32,13 +32,9 @@
         <div class="card sysStat">
           <div class="card-header">System Statistics</div>
           <ul class="list-group list-group-flush" style="text-align: left">
-            <li class="list-group-item">
-              CPU Speed: {{ stats.maxFreq / 1000000000 }}GHz
-            </li>
+            <li class="list-group-item">CPU Speed: {{ cpuSpeed() }}GHz</li>
             <li class="list-group-item">Cores: {{ stats.logicalProcessorCount }}</li>
-            <li class="list-group-item">
-              Mem: {{ Math.round((stats.memory / 1000000000) * 100) / 100 }}Gb
-            </li>
+            <li class="list-group-item">{{ sysMem() }}</li>
           </ul>
         </div>
       </div>
@@ -52,7 +48,7 @@
             <button type="button" class="btn btn-secondary">Pollard's Rho Method</button>
           </div>
         </div>
-        <prism class="code" language="java">{{ test.value }} </prism>
+        <prism class="code" language="java">{{ selected.value }} </prism>
       </div>
     </div>
   </div>
@@ -61,9 +57,9 @@
 <script>
 /* eslint-disable */
 import LineChartVue from "./components/LineChart.vue";
+import dhBruteForce from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/diffiehellman/DiffieHellmanBruteForce.java";
 import babyStepGaintStep from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/diffiehellman/BabyStepGiaintStep.java";
-import bruteForce from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/diffiehellman/DiffieHellmanBruteForce.java";
-//import bruteForce from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/diffiehellman/.java";
+import pollardRho from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/PollardRho.java";
 import "prismjs/components/prism-java";
 import Prism from "vue-prism-component";
 import axios from "axios";
@@ -75,8 +71,20 @@ export default {
       normalizedSpeed: 0,
       memory: 0,
       stats: {},
-      test: { name: "text1", value: babyStepGaintStep },
+      dhBruteForce: { name: "bruteForce", value: dhBruteForce },
+      babystep: { name: "babystep", value: babyStepGaintStep },
+      pollardRho: { name: "pollardRho", value: pollardRho },
+      selected: { name: "selected", value: dhBruteForce },
     };
+  },
+  computed: {},
+  methods: {
+    sysMem() {
+      return Math.round((this.stats.memory / 1000000000) * 100) / 100;
+    },
+    cpuSpeed() {
+      return this.stats.maxFreq / 1000000000;
+    },
   },
   components: {
     LineChartVue,

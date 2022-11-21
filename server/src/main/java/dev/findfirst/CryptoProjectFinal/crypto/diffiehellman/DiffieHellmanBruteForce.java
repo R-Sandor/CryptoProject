@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Class to stimulate a naive brute force attempt. This is more or less a baseline of gauging the
- * performance of various methods.
+ * performance of other various methods.
  */
 @Component
 @Slf4j
