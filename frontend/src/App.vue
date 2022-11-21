@@ -40,15 +40,41 @@
       </div>
       <div class="col-10 codeSel2">
         <div class="codeSel">
-          <div class="btn-group" role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-secondary">Brute Force</button>
-            <button type="button" class="btn active btn-secondary">
+          <div class="btn-group" data-toggle="buttons" role="group">
+            <button
+              @click="codeSelection(0)"
+              type="button"
+              data-bs-toggle="button"
+              class="btn btn-secondary active"
+              :aria-pressed="buttons[0].state"
+            >
+              Brute Force
+            </button>
+            <button
+              @click="codeSelection(1)"
+              type="button"
+              data-bs-toggle="button"
+              class="btn btn-secondary"
+              :aria-pressed="buttons[1].state"
+            >
               Baby Step Gaint Step
             </button>
-            <button type="button" class="btn btn-secondary">Pollard's Rho Method</button>
+            <button
+              @click="codeSelection(2)"
+              type="button"
+              data-bs-toggle="button"
+              class="btn btn-secondary"
+              :aria-pressed="buttons[2].state"
+            >
+              Pollard's Rho Method
+            </button>
           </div>
         </div>
-        <prism class="code" language="java">{{ selected.value }} </prism>
+        <div class="code">
+          <pre><code class="language-java">{{selected}}</code></pre>
+        </div>
+        <!-- <prism class="code" language="java">{{ selected }} </prism>
+        <div>{{ test }}</div> -->
       </div>
     </div>
   </div>
@@ -61,9 +87,9 @@ import dhBruteForce from "raw-loader!../../server/src/main/java/dev/findfirst/Cr
 import babyStepGaintStep from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/diffiehellman/BabyStepGiaintStep.java";
 import pollardRho from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/PollardRho.java";
 import "prismjs/components/prism-java";
-import Prism from "vue-prism-component";
+import Prism from "prismjs";
+// import "prismjs/themes/prism.css"; // you can change
 import axios from "axios";
-
 export default {
   name: "App",
   data() {
@@ -71,10 +97,16 @@ export default {
       normalizedSpeed: 0,
       memory: 0,
       stats: {},
+      test: "cool",
       dhBruteForce: { name: "bruteForce", value: dhBruteForce },
       babystep: { name: "babystep", value: babyStepGaintStep },
       pollardRho: { name: "pollardRho", value: pollardRho },
-      selected: { name: "selected", value: dhBruteForce },
+      selected: dhBruteForce,
+      buttons: [
+        { caption: "Brute Force", state: true },
+        { caption: "Baby Step Gaint Step", state: false },
+        { caption: "Pollard's Rho Method", state: false },
+      ],
     };
   },
   computed: {},
@@ -85,16 +117,45 @@ export default {
     cpuSpeed() {
       return this.stats.maxFreq / 1000000000;
     },
+    codeSelection(buttonIdx) {
+      console.info(buttonIdx);
+      console.log(this.buttons[buttonIdx].state);
+      this.buttons[buttonIdx].state = !this.buttons[buttonIdx].state;
+      switch (buttonIdx) {
+        case 0:
+          this.selected = this.dhBruteForce.value;
+          Prism.highlightAll(); // highlight your code on moun
+          break;
+        case 1:
+          this.selected = this.babystep.value;
+          Prism.highlightAll(); // highlight your code on moun
+          break;
+        case 2:
+          this.selected = this.pollardRho.value;
+          break;
+      }
+      setTimeout(function () {
+        Prism.highlightAll(); // highlight your code on moun
+      }, 500);
+    },
   },
   components: {
     LineChartVue,
     Prism,
+  },
+  watch: {
+    selected() {
+      console.info("here");
+    },
   },
   mounted() {
     axios.get("http://localhost:9000/sys/stats").then((response) => {
       this.stats = response ? response.data : null;
       this.normalizedSpeed = response.maxFreq / 1000000000;
     });
+    // window.Prism = window.Prism || {};
+    // window.Prism.manual = true;
+    // Prism.highlightAll(); // highlight your code on moun
   },
 };
 </script>
