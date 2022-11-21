@@ -61,7 +61,9 @@
 <script>
 /* eslint-disable */
 import LineChartVue from "./components/LineChart.vue";
-import text1 from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/service/BabyStepGiaintStep.java";
+import babyStepGaintStep from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/diffiehellman/BabyStepGiaintStep.java";
+import bruteForce from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/diffiehellman/DiffieHellmanBruteForce.java";
+//import bruteForce from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/diffiehellman/.java";
 import "prismjs/components/prism-java";
 import Prism from "vue-prism-component";
 import axios from "axios";
@@ -73,7 +75,7 @@ export default {
       normalizedSpeed: 0,
       memory: 0,
       stats: {},
-      test: { name: "text1", value: text1 },
+      test: { name: "text1", value: babyStepGaintStep },
     };
   },
   components: {

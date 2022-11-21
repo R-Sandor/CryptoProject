@@ -1,6 +1,7 @@
 package dev.findfirst.CryptoProjectFinal.controller;
 
 import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator;
+import dev.findfirst.CryptoProjectFinal.crypto.PollardRho;
 import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.BabyStepGiaintStep;
 import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DiffieHellmanBruteForce;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ public class DiffieHellmanController {
   @Autowired KeyGenerator keyGen;
   @Autowired BabyStepGiaintStep babyStep;
   @Autowired DiffieHellmanBruteForce bruteForce;
+  @Autowired PollardRho pollardRho;
 
   @RequestMapping(
       value = "/babyStep/{alpha}/{keysize}",
@@ -40,4 +42,15 @@ public class DiffieHellmanController {
     // if the bit size is greater than 31 bits then BigIntegers need to be used.
     return bruteForce.solveTime(keyGen.generateBigKeys(alpha, keysize));
   }
+
+
+  @RequestMapping(
+      value = "/pr/{alpha}/{keysize}",
+      method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public long getPollarRhoPerformacne(@PathVariable long alpha, @PathVariable int keysize) {
+    // if the bit size is greater than 31 bits then BigIntegers need to be used.
+    return pollardRho.solveTime(keyGen.generateBigKeys(alpha, keysize));
+  }
+
 }

@@ -9,10 +9,7 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-/**
- * Baby Step Gaint step is an attack used against Diffie-Hellman/Algamal Crypto Systems. There are
- * two versions of the mode. Small keys that doesn't require BigInteger.
- */
+/** Baby Step Gaint step is an attack used against Diffie-Hellman/Algamal Crypto Systems. */
 @Component
 @Slf4j
 public class BabyStepGiaintStep implements SolveTimer {
