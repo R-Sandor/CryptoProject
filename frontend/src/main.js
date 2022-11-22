@@ -6,6 +6,9 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap";
 import "prismjs";
 import "prismjs/themes/prism-tomorrow.css";
+// global.jQuery = require('jquery');
+// var $ = global.jQuery;
+// window.$ = $;
 
 //import 'bootstrap-vue/dist/bootstrap-vue.css'
 

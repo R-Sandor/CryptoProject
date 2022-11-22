@@ -41,33 +41,9 @@
       <div class="col-10 codeSel2">
         <div class="codeSel">
           <div class="btn-group" data-toggle="buttons" role="group">
-            <button
-              @click="codeSelection(0)"
-              type="button"
-              data-bs-toggle="button"
-              class="btn btn-secondary active"
-              :aria-pressed="buttons[0].state"
-            >
-              Brute Force
-            </button>
-            <button
-              @click="codeSelection(1)"
-              type="button"
-              data-bs-toggle="button"
-              class="btn btn-secondary"
-              :aria-pressed="buttons[1].state"
-            >
-              Baby Step Gaint Step
-            </button>
-            <button
-              @click="codeSelection(2)"
-              type="button"
-              data-bs-toggle="button"
-              class="btn btn-secondary"
-              :aria-pressed="buttons[2].state"
-            >
-              Pollard's Rho Method
-            </button>
+            <div v-for="button in buttons" :key="button.id">
+              <AlgorithmButton @algselect="codeSelection" :button="button" />
+            </div>
           </div>
         </div>
         <pre class="code"><code class="code language-java">{{selected}}</code></pre>
@@ -78,6 +54,7 @@
 
 <script>
 /* eslint-disable */
+import AlgorithmButton from "./components/AlgorithmButton.vue";
 import LineChartVue from "./components/LineChart.vue";
 import dhBruteForce from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/diffiehellman/DiffieHellmanBruteForce.java";
 import babyStepGaintStep from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/diffiehellman/BabyStepGiaintStep.java";
@@ -99,9 +76,9 @@ export default {
       pollardRho: { name: "pollardRho", value: pollardRho },
       selected: dhBruteForce,
       buttons: [
-        { caption: "Brute Force", state: true },
-        { caption: "Baby Step Gaint Step", state: false },
-        { caption: "Pollard's Rho Method", state: false },
+        { id: "btnForce", idx: 0, caption: "Brute Force", state: true },
+        { id: "btnBaby", idx: 1, caption: "Baby Step Gaint Step", state: false },
+        { id: "btnPollard", idx: 2, caption: "Pollard's Rho method", state: false },
       ],
     };
   },
@@ -116,6 +93,9 @@ export default {
     codeSelection(buttonIdx) {
       console.info(buttonIdx);
       console.log(this.buttons[buttonIdx].state);
+      this.buttons[0].state = false;
+      this.buttons[1].state = false;
+      this.buttons[2].state = false;
       this.buttons[buttonIdx].state = !this.buttons[buttonIdx].state;
       switch (buttonIdx) {
         case 0:
@@ -135,14 +115,11 @@ export default {
     },
   },
   components: {
+    AlgorithmButton,
     LineChartVue,
     Prism,
   },
-  watch: {
-    selected() {
-      console.info("here");
-    },
-  },
+  watch: {},
   mounted() {
     axios.get("http://localhost:9000/sys/stats").then((response) => {
       this.stats = response ? response.data : null;
