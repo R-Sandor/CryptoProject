@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class BabyStepGiaintStep implements SolveTimer {
 
   /**
-   * This is the same thing a BigIntegers modPow.
+   * This is the same thing as BigInteger's modPow.
    *
    * @param a the base.
    * @param b the exponent
