@@ -70,11 +70,7 @@
             </button>
           </div>
         </div>
-        <div class="code">
-          <pre><code class="language-java">{{selected}}</code></pre>
-        </div>
-        <!-- <prism class="code" language="java">{{ selected }} </prism>
-        <div>{{ test }}</div> -->
+        <pre class="code"><code class="code language-java">{{selected}}</code></pre>
       </div>
     </div>
   </div>
@@ -124,19 +120,18 @@ export default {
       switch (buttonIdx) {
         case 0:
           this.selected = this.dhBruteForce.value;
-          Prism.highlightAll(); // highlight your code on moun
           break;
         case 1:
           this.selected = this.babystep.value;
-          Prism.highlightAll(); // highlight your code on moun
           break;
         case 2:
           this.selected = this.pollardRho.value;
           break;
       }
+      // Need to give prism just a little bit of time to let the code load.
       setTimeout(function () {
-        Prism.highlightAll(); // highlight your code on moun
-      }, 500);
+        Prism.highlightAll();
+      }, 10);
     },
   },
   components: {
@@ -153,9 +148,9 @@ export default {
       this.stats = response ? response.data : null;
       this.normalizedSpeed = response.maxFreq / 1000000000;
     });
-    // window.Prism = window.Prism || {};
-    // window.Prism.manual = true;
-    // Prism.highlightAll(); // highlight your code on moun
+    window.Prism = window.Prism || {};
+    window.Prism.manual = true;
+    Prism.highlightAll(); // highlight your code on moun
   },
 };
 </script>
@@ -173,6 +168,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 .chart-container {
@@ -208,7 +204,7 @@ body {
 .code {
   height: -webkit-calc(100vh - 500px);
   height: -moz-calc(100vh - 500px);
-  height: calc(100vh - 500px);
+  height: calc(100vh - 480px);
 }
 
 .codeSel {

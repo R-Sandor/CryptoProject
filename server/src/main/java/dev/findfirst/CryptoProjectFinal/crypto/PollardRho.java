@@ -47,8 +47,8 @@ public class PollardRho implements SolveTimer {
 
   public String solvePollardRho(BigKeys keys) {
     log.debug("a {}, b {}, p {}, privKey {}", keys.a(), keys.kpub(), keys.p(), keys.kpriv());
-    BigInteger alpha = BigInteger.valueOf(2l); //keys.a();
-    BigInteger beta = BigInteger.valueOf(5l); // keys.kpub();
+    BigInteger alpha = keys.a();
+    BigInteger beta =  keys.kpub();
     BigInteger N = keys.p();
     BigInteger n = N.subtract(BigInteger.ONE);
     BigInteger x = BigInteger.ONE, a = BigInteger.ZERO, b = BigInteger.ZERO;
