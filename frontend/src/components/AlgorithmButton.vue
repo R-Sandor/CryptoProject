@@ -4,7 +4,8 @@
     @click="$emit('algselect', button.idx)"
     type="button"
     data-bs-toggle="button"
-    class="btn btn-secondary"
+    class="btn btn-outline-secondary"
+    style="border-radius: 0 !important"
     aria-pressed="false"
   >
     {{ button.caption }}
@@ -25,3 +26,4 @@ export default {
   },
 };
 </script>
+<style></style>

@@ -43,7 +43,7 @@
       <div class="col-10 codeSel2">
         <div class="codeSel">
           <div class="btn-group" data-toggle="buttons" role="group">
-            <div v-for="button in buttons" :key="button.id">
+            <div class="btn-group" v-for="button in buttons" :key="button.id">
               <AlgorithmButton @algselect="codeSelection" :button="button" />
             </div>
           </div>
@@ -195,7 +195,6 @@ body {
   padding-top: 0px;
   text-align: right;
   position: relative;
-  right: 15px;
   top: 46px;
 }
 
