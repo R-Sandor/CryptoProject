@@ -74,7 +74,7 @@ export default {
   data() {
     return {
       chartData: {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+        labels: ["4", "8", "12", "16", "20", "24", "28", "32"],
         datasets: [
           {
             data: [300, 700, 450, 750, 450],
@@ -84,6 +84,20 @@ export default {
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Bit Length",
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: "Time",
+            },
+          },
+        },
       },
     };
   },

@@ -18,8 +18,10 @@
     <div class="row">
       <div class="col-2 nopadding">
         <div class="list-group algselect">
-          <a href="#" class="list-group-item list-group-item active"> RSA </a>
-          <a href="#" class="list-group-item list-group-item-action">Diffie-Hellman</a>
+          <a href="#" class="list-group-item list-group-item-action active"
+            >Diffie-Hellman</a
+          >
+          <a href="#" class="list-group-item list-group-item-action"> RSA </a>
           <a href="#" class="list-group-item list-group-item-action"> Elliptic Curve</a>
         </div>
       </div>
@@ -63,6 +65,7 @@ import "prismjs/components/prism-java";
 import Prism from "prismjs";
 // import "prismjs/themes/prism.css"; // you can change
 import axios from "axios";
+import $ from "jquery";
 export default {
   name: "App",
   data() {
@@ -108,6 +111,7 @@ export default {
           this.selected = this.pollardRho.value;
           break;
       }
+      $("#" + this.buttons[buttonIdx].id).addClass("active");
       // Need to give prism just a little bit of time to let the code load.
       setTimeout(function () {
         Prism.highlightAll();
@@ -125,6 +129,8 @@ export default {
       this.stats = response ? response.data : null;
       this.normalizedSpeed = response.maxFreq / 1000000000;
     });
+    // set bruteforce to be active by default
+    $("#" + this.buttons[0].id).addClass("active");
     window.Prism = window.Prism || {};
     window.Prism.manual = true;
     Prism.highlightAll(); // highlight your code on moun

@@ -5,7 +5,7 @@
     type="button"
     data-bs-toggle="button"
     class="btn btn-secondary"
-    aria-pressed="true"
+    aria-pressed="false"
   >
     {{ button.caption }}
   </button>
