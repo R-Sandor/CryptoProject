@@ -14,6 +14,7 @@
 </template>
 <script>
 import { Line } from "vue-chartjs";
+import { Colors } from "chart.js";
 
 import {
   Chart as ChartJS,
@@ -33,7 +34,8 @@ ChartJS.register(
   LineElement,
   LinearScale,
   PointElement,
-  CategoryScale
+  CategoryScale,
+  Colors
 );
 
 export default {
@@ -42,6 +44,7 @@ export default {
     Line,
   },
   props: {
+    chartData: {},
     chartId: {
       type: String,
       default: "line-chart",
@@ -73,14 +76,6 @@ export default {
   },
   data() {
     return {
-      chartData: {
-        labels: ["4", "8", "12", "16", "20", "24", "28", "32"],
-        datasets: [
-          {
-            data: [300, 700, 450, 750, 450],
-          },
-        ],
-      },
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
@@ -101,6 +96,10 @@ export default {
       },
     };
   },
-  methods: {},
+  methods: {
+    mounted() {
+      this.addPlugin(Colors);
+    },
+  },
 };
 </script>

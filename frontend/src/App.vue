@@ -4,8 +4,8 @@
       <a class="navbar-brand" href="#">
         <img
           src="./assets/ff_header2.png"
-          width="100"
-          height="50"
+          width="60"
+          height="30"
           alt=""
           class="d-inline-block align-top"
         />
@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="col-10 .chart-container">
-        <LineChartVue />
+        <LineChartVue :chartData="chartData" />
       </div>
     </div>
     <div class="row flex-grow-1">
@@ -83,6 +83,7 @@ export default {
         { id: "btnBaby", idx: 1, caption: "Baby Step Gaint Step", state: false },
         { id: "btnPollard", idx: 2, caption: "Pollard's Rho method", state: false },
       ],
+      chartData: {},
     };
   },
   computed: {},
@@ -134,6 +135,24 @@ export default {
     window.Prism = window.Prism || {};
     window.Prism.manual = true;
     Prism.highlightAll(); // highlight your code on moun
+    this.chartData = {
+      labels: ["4", "8", "12", "16", "20", "24", "28", "32"],
+      datasets: [
+        {
+          label: "Brute Force",
+          data: [],
+        },
+        {
+          label: "Baby Step Giant Step",
+          data: [],
+        },
+        {
+          label: "Pollard's Rho",
+          data: [],
+        },
+      ],
+    };
+    LineChartVue;
   },
 };
 </script>
@@ -170,7 +189,7 @@ body {
 
 .sysStat {
   text-align: left !important;
-  background-color: #6c757d;
+  /* background-color: #6c757d; */
   border-radius: 0 !important;
 }
 
@@ -204,5 +223,28 @@ body {
   text-align: right;
   position: relative;
   top: -46px;
+}
+
+.list-group-item.active {
+  z-index: 2;
+  color: whitesmoke;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+.btn-outline-secondary.active {
+  z-index: 2;
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-check:checked + .btn,
+.btn.active,
+.btn.show,
+.btn:first-child:active,
+:not(.btn-check) + .btn:active {
+  color: whitesmoke;
+  background-color: #6c757d;
+  border-color: #6c757d;
 }
 </style>
