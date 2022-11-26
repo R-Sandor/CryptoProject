@@ -10,8 +10,8 @@ Bench marks the performance of Diffie-Hellman using different typos attacks
 # Objectives 
 Demonstrate the algorithmic complexity of both the cryptographic algorithms and the various attacks in which the susceptible. 
 In the process objectives of the course cs563 were also applied, for example the topic of certificate management and secure connections
-between host and client. The application of this topic can be seen with www.findfirst.dev have a secure connection using an SSL certificate
-aquired from a CA in this it was LetsEncrypt.org, a open source project that provides certificates.
+between host and client. The application of this topic can be seen with www.findfirst.dev which has a secure connection between client and 
+server using an SSL certificate. The certificate aquired from a CA in this it was LetsEncrypt.org, a open source project that provides certificates.
 
 To see a running demo visit 
 http://www.findfirst.dev
