@@ -39,6 +39,7 @@ public class CryptoProjectFinalApplication {
             "http://127.0.0.1:3000",
             "https://findfirst.dev",
             "https://www.findfirst.dev",
+            "https://www.findfirst.dev:3000",
             "http://localhost",
             "http://127.0.0.1"));
     config.setAllowedMethods(Collections.singletonList("*"));

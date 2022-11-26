@@ -1,6 +1,6 @@
 import axios from 'axios'  
   
-const SERVER_URL = 'http://localhost:9000';  
+const SERVER_URL = 'api';  
   
 const instance = axios.create({  
   baseURL: SERVER_URL,  
@@ -19,7 +19,7 @@ export default {
   },  
   
   runAlgorithm(req, i){
-    return this.execute("GET", req + "/2/" + i )
+    return this.execute("GET", req + "/2/" + i)
   },
 
   getStats(){ 

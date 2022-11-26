@@ -1,7 +1,14 @@
 # CryptoProject
 ## Raphael J. Sandor 
 ## Fall Semester 2022
-Cryptography for cybersecurity Final Project
+Cryptography algorithms for cybersecurity Final Project
+Bench marks the performance of Diffie-Hellman using different typos attacks
+- Naive Brute Force
+- Baby Step Giant Step
+- Pollard's Rho Method
+
+To see a running demo visit 
+http://www.findfirst.dev
 
 # Requirements 
 
