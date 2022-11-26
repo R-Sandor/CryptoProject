@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 /** Baby Step Gaint step is an attack used against Diffie-Hellman/Algamal Crypto Systems. */
 @Component
 @Slf4j
-public class BabyStepGiaintStep implements SolveTimer {
+public class BabyStepGiantStep implements SolveTimer {
 
   /**
    * This is the same thing as BigInteger's modPow.

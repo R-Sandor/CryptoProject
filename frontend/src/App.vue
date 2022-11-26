@@ -21,8 +21,10 @@
           <a href="#" class="list-group-item list-group-item-action active"
             >Diffie-Hellman</a
           >
-          <a href="#" class="list-group-item list-group-item-action"> RSA </a>
-          <a href="#" class="list-group-item list-group-item-action"> Elliptic Curve</a>
+          <a href="#" class="list-group-item list-group-item-action disabled"> RSA </a>
+          <a href="#" class="list-group-item list-group-item-action disabled">
+            Elliptic Curve</a
+          >
         </div>
       </div>
       <div class="col-10 .chart-container">
@@ -58,11 +60,12 @@
 /* eslint-disable */
 import AlgorithmButton from "./components/AlgorithmButton.vue";
 import LineChartVue from "./components/LineChart.vue";
-import dhBruteForce from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/diffiehellman/DiffieHellmanBruteForce.java";
-import babyStepGaintStep from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/diffiehellman/BabyStepGiaintStep.java";
-import pollardRho from "raw-loader!../../server/src/main/java/dev/findfirst/CryptoProjectFinal/crypto/PollardRho.java";
+import dhBruteForce from "raw-loader!./assets/DiffieHellmanBruteForce.java";
+import babyStepGaintStep from "raw-loader!./assets/BabyStepGiantStep.java";
+import pollardRho from "raw-loader!./assets/PollardRho.java";
 import "prismjs/components/prism-java";
 import Prism from "prismjs";
+import api from "./Api";
 // import "prismjs/themes/prism.css"; // you can change
 import axios from "axios";
 import $ from "jquery";
@@ -118,6 +121,38 @@ export default {
         Prism.highlightAll();
       }, 10);
     },
+    setBabyStepData() {
+      let idx = 0;
+      for (let i = 4; i <= 32; i += 4) {
+        this.buildData("dh/babyStep", 1, i, idx);
+        idx++;
+      }
+    },
+    setBruteForce() {
+      let idx = 0;
+      for (let i = 4; i <= 20; i += 4) {
+        this.buildData("dh/bf", 0, i, idx);
+        idx++;
+      }
+    },
+    setPollardRho() {
+      let idx = 0;
+      for (let i = 4; i <= 32; i += 4) {
+        this.buildData("dh/pr", 2, i, idx);
+        idx++;
+      }
+    },
+    buildData(req, ds, i, idx) {
+      const me = this;
+      setTimeout(function () {
+        api.runAlgorithm(req, i).then((response) => {
+          let time = response ? response.data : null;
+          console.log(idx);
+          if (time) me.chartData.datasets[ds].data[idx] = time;
+          console.log(time);
+        });
+      }, i * 250);
+    },
   },
   components: {
     AlgorithmButton,
@@ -126,7 +161,7 @@ export default {
   },
   watch: {},
   mounted() {
-    axios.get("http://localhost:9000/sys/stats").then((response) => {
+    api.getStats().then((response) => {
       this.stats = response ? response.data : null;
       this.normalizedSpeed = response.maxFreq / 1000000000;
     });
@@ -152,7 +187,9 @@ export default {
         },
       ],
     };
-    LineChartVue;
+    this.setBabyStepData();
+    this.setBruteForce();
+    this.setPollardRho();
   },
 };
 </script>
@@ -211,6 +248,7 @@ body {
 
 .codeSel {
   margin-top: 0px;
+  margin-right: 10px;
   padding-top: 0px;
   text-align: right;
   position: relative;
@@ -246,5 +284,22 @@ body {
   color: whitesmoke;
   background-color: #6c757d;
   border-color: #6c757d;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  color: #6c757d;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 3px #6c757d;
+  border-radius: 19px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 19px;
+  -webkit-box-shadow: inset 0 0 3px #6c757d;
+  background: #296bd3;
+  scrollbar-color: rebeccapurple green;
 }
 </style>

@@ -2,7 +2,7 @@ package dev.findfirst.CryptoProjectFinal.controller;
 
 import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator;
 import dev.findfirst.CryptoProjectFinal.crypto.PollardRho;
-import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.BabyStepGiaintStep;
+import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.BabyStepGiantStep;
 import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DiffieHellmanBruteForce;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DiffieHellmanController {
 
   @Autowired KeyGenerator keyGen;
-  @Autowired BabyStepGiaintStep babyStep;
+  @Autowired BabyStepGiantStep babyStep;
   @Autowired DiffieHellmanBruteForce bruteForce;
   @Autowired PollardRho pollardRho;
 
@@ -43,7 +43,6 @@ public class DiffieHellmanController {
     return bruteForce.solveTime(keyGen.generateBigKeys(alpha, keysize));
   }
 
-
   @RequestMapping(
       value = "/pr/{alpha}/{keysize}",
       method = RequestMethod.GET,
@@ -52,5 +51,4 @@ public class DiffieHellmanController {
     // if the bit size is greater than 31 bits then BigIntegers need to be used.
     return pollardRho.solveTime(keyGen.generateBigKeys(alpha, keysize));
   }
-
 }
