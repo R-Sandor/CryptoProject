@@ -23,7 +23,7 @@ http://www.findfirst.dev
 - Node.js (16.15.0+)
 
 ### To run locally call the utility startup script on a unix terminal.
-chmod u+x startCrypto.sh \\
+chmod u+x startCrypto.sh \
 ./startCrypto.sh
 
 Navigate to http://localhost:8080
