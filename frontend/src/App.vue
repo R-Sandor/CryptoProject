@@ -1,19 +1,5 @@
 <template>
-  <nav class="navbar navbar-light banner">
-    <a class="navbar-brand" href="#">
-      <a class="navbar-brand" href="#">
-        <img
-          src="./assets/ff_header2.png"
-          width="60"
-          height="30"
-          alt=""
-          class="d-inline-block align-top"
-        />
-        <!-- <inline> <h2>Crpyto Analysis Project</h2> </inline> -->
-      </a>
-      Raphael J. Sandor - Crpyto Analysis Project
-    </a>
-  </nav>
+  <NavBar />
   <div class="container-fluid">
     <div class="row">
       <div class="col-2 nopadding">
@@ -137,9 +123,8 @@ import pollardRho from "raw-loader!./assets/PollardRho.java";
 import "prismjs/components/prism-java";
 import Prism from "prismjs";
 import api from "./Api";
-// import "prismjs/themes/prism.css"; // you can change
-import axios from "axios";
 import $ from "jquery";
+import NavBar from "./components/NavBar.vue";
 export default {
   name: "App",
   data() {
@@ -246,6 +231,7 @@ export default {
   components: {
     AlgorithmButton,
     LineChartVue,
+    NavBar,
     Prism,
   },
   watch: {},
@@ -318,10 +304,6 @@ body {
   /* background-color: #6c757d; */
   border-radius: 0 !important;
   margin-top: 25px;
-}
-
-.banner {
-  background: #296bd3;
 }
 
 .nopadding {
