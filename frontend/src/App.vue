@@ -26,13 +26,6 @@
             Elliptic Curve</a
           >
         </div>
-      </div>
-      <div class="col-10 .chart-container">
-        <LineChartVue :chartData="chartData" />
-      </div>
-    </div>
-    <div class="row flex-grow-1">
-      <div class="col-2">
         <div class="card sysStat">
           <div class="card-header">System Statistics</div>
           <ul class="list-group list-group-flush" style="text-align: left">
@@ -40,6 +33,75 @@
             <li class="list-group-item">Cores: {{ stats.logicalProcessorCount }}</li>
             <li class="list-group-item">{{ sysMem() }}</li>
           </ul>
+        </div>
+      </div>
+      <div class="col-10 .chart-container">
+        <LineChartVue :chartData="chartData" />
+      </div>
+    </div>
+    <div class="row flex-grow-1">
+      <div class="col-2 nopadding">
+        <div class="keyGen">
+          Key Generator - {{ selectedCracker }}
+          <hr />
+          <form @submit.prevent>
+            <div class="form-group row">
+              <label for="alpha" class="col-sm-2 col-form-label">&alpha;</label>
+              <div class="col-sm-5">
+                <input v-model="alpha" type="number" class="form-control" id="alpha" />
+              </div>
+              <label for="p" class="col-sm-1 form-label">p</label>
+              <div class="col-sm-3 nopadding">
+                <textarea
+                  readonly
+                  v-model="p"
+                  class="form-control"
+                  id="p"
+                  rows="1"
+                ></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <label for="bitlength" class="col-sm-2 col-form-label">Bitsize</label>
+              <div class="col-sm-5">
+                <input
+                  v-model="bitsize"
+                  type="number"
+                  class="form-control"
+                  id="bitLength"
+                  placeholder="4-2048"
+                />
+              </div>
+              <label for="e" class="col-sm-1 form-label">e</label>
+              <div class="col-sm-3 nopadding">
+                <textarea
+                  v-model="e"
+                  readonly
+                  class="form-control"
+                  id="p"
+                  rows="1"
+                ></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-7"></div>
+              <div class="col-sm-1">d</div>
+              <div class="col-sm-3 nopadding">
+                <textarea
+                  v-model="d"
+                  readonly
+                  class="form-control"
+                  id="d"
+                  rows="1"
+                ></textarea>
+              </div>
+            </div>
+            <div class="row nopadding">
+              <button @click="generateKey()" class="btn btn-primary mb-3">
+                Generate Key
+              </button>
+            </div>
+          </form>
         </div>
       </div>
       <div class="col-10 codeSel2">
@@ -50,7 +112,7 @@
             </div>
           </div>
         </div>
-        <pre class="code"><code class="code language-java">{{selected}}</code></pre>
+        <pre class="code"><code class="code language-java">{{selectedCode}}</code></pre>
       </div>
     </div>
   </div>
@@ -80,7 +142,13 @@ export default {
       dhBruteForce: { name: "bruteForce", value: dhBruteForce },
       babystep: { name: "babystep", value: babyStepGaintStep },
       pollardRho: { name: "pollardRho", value: pollardRho },
-      selected: dhBruteForce,
+      selectedCode: dhBruteForce,
+      selectedCracker: "Diffie-Hellman",
+      p: "",
+      e: "",
+      d: "",
+      alpha: 2,
+      bitsize: 4,
       buttons: [
         { id: "btnForce", idx: 0, caption: "Brute Force", state: true },
         { id: "btnBaby", idx: 1, caption: "Baby Step Gaint Step", state: false },
@@ -153,6 +221,9 @@ export default {
         });
       }, i * 250);
     },
+    generateKey() {
+      console.log("submit");
+    },
   },
   components: {
     AlgorithmButton,
@@ -187,9 +258,9 @@ export default {
         },
       ],
     };
-    this.setBabyStepData();
-    this.setBruteForce();
-    this.setPollardRho();
+    // this.setBabyStepData();
+    // this.setBruteForce();
+    // this.setPollardRho();
   },
 };
 </script>
@@ -228,6 +299,7 @@ body {
   text-align: left !important;
   /* background-color: #6c757d; */
   border-radius: 0 !important;
+  margin-top: 25px;
 }
 
 .banner {
@@ -274,6 +346,13 @@ body {
   color: #fff;
   background-color: #6c757d;
   border-color: #6c757d;
+}
+
+.keyGen {
+  border-radius: 3px;
+  border: 1px solid #2c3e50;
+  background-color: whitesmoke;
+  margin-top: 25px;
 }
 
 .btn-check:checked + .btn,
