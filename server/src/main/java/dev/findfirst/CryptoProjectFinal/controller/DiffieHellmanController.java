@@ -1,8 +1,8 @@
 package dev.findfirst.CryptoProjectFinal.controller;
 
-import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator;
 import dev.findfirst.CryptoProjectFinal.crypto.PollardRho;
 import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.BabyStepGiantStep;
+import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DHKeyGenerator;
 import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DiffieHellmanBruteForce;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class DiffieHellmanController {
 
-  @Autowired KeyGenerator keyGen;
+  @Autowired DHKeyGenerator keyGen;
   @Autowired BabyStepGiantStep babyStep;
   @Autowired DiffieHellmanBruteForce bruteForce;
   @Autowired PollardRho pollardRho;

@@ -1,8 +1,8 @@
 package dev.findfirst.CryptoProjectFinal.crypto.diffiehellman;
 
-import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.BigKeys;
-import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.KeysRec;
 import dev.findfirst.CryptoProjectFinal.crypto.SolveTimer;
+import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DHKeyGenerator.DHKeys;
+import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DHKeyGenerator.DHKeysRec;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,10 +88,10 @@ public class BabyStepGiantStep implements SolveTimer {
   /**
    * Calculates the time it takes to solve for x using Baby Step Giant Step
    *
-   * @param KeysRec small keys record.
+   * @param DHKeysRec small keys record.
    * @return return solve time
    */
-  public long solveTime(KeysRec keysRec) {
+  public long solveTime(DHKeysRec keysRec) {
     long start = System.currentTimeMillis();
     long x = discreteLogarithm(keysRec.a(), keysRec.kpub(), keysRec.p(), keysRec.kpriv());
     log.debug("Key Found: {}", x);
@@ -105,7 +105,7 @@ public class BabyStepGiantStep implements SolveTimer {
    * @return solve time in milliseconds.
    */
   @Override
-  public long solveTime(BigKeys keysRec) {
+  public long solveTime(DHKeys keysRec) {
     long start = System.currentTimeMillis();
     String x = bigKeyDiscrete(keysRec.kpub(), keysRec.kpriv(), keysRec.a(), keysRec.p());
     log.debug("Key Found: {}", x);

@@ -1,4 +1,4 @@
-package dev.findfirst.CryptoProjectFinal.crypto;
+package dev.findfirst.CryptoProjectFinal.crypto.diffiehellman;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class KeyGenerator {
+public class DHKeyGenerator {
 
   public long genRandomInBitSize(int keySize) {
     --keySize; // accounting the operator applied to the base.
@@ -80,14 +80,14 @@ public class KeyGenerator {
    *
    * @param keySize key size in bits
    */
-  public KeysRec generateKeys(long alpha, int keySize) {
+  public DHKeysRec generateKeys(long alpha, int keySize) {
     long p = generatePrime(keySize);
     long kpriv = genDprime(keySize, p);
     long kpub = fastMod(alpha, kpriv, p);
-    return new KeysRec(kpub, kpriv, alpha, p);
+    return new DHKeysRec(kpub, kpriv, alpha, p);
   }
 
-  public BigKeys generateBigKeys(long alpha, int keySize) {
+  public DHKeys generateBigKeys(long alpha, int keySize) {
     SecureRandom rnd = new SecureRandom();
     BigInteger tmp;
     BigInteger a = BigInteger.valueOf(alpha);
@@ -110,13 +110,12 @@ public class KeyGenerator {
     BigInteger kpub = a.modPow(kpriv, p);
     log.debug("kpub {}", kpub);
 
-    return new BigKeys(kpub, kpriv, a, p, keySize);
+    return new DHKeys(kpub, kpriv, a, p, keySize);
   }
 
-  public record KeysRec(long kpub, long kpriv, long a, long p) {}
+  public record DHKeysRec(long kpub, long kpriv, long a, long p) {}
 
-  public record BigKeys(
-      BigInteger kpub, BigInteger kpriv, BigInteger a, BigInteger p, int bitsize) {
+  public record DHKeys(BigInteger kpub, BigInteger kpriv, BigInteger a, BigInteger p, int bitsize) {
     public HexKeys getHexKeys() {
       return new HexKeys(
           kpub.toString(16), kpriv.toString(16), a.toString(16), p.toString(16), bitsize);

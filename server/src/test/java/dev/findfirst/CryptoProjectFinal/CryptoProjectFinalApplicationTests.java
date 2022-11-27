@@ -4,18 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DHKeyGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator;
-
 @SpringBootTest
 @Slf4j
 class CryptoProjectFinalApplicationTests {
 
-  @Autowired KeyGenerator keyGen;
+  @Autowired DHKeyGenerator keyGen;
 
   @Test
   void numInRangeOfBits() {

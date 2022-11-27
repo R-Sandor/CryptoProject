@@ -1,6 +1,6 @@
 package dev.findfirst.CryptoProjectFinal.crypto;
 
-import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.BigKeys;
+import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DHKeyGenerator.DHKeys;
 
 public interface SolveTimer {
 
@@ -10,5 +10,5 @@ public interface SolveTimer {
    * @param keys encrpytion parameters
    * @return solve time.
    */
-  public long solveTime(BigKeys keys);
+  public long solveTime(DHKeys keys);
 }

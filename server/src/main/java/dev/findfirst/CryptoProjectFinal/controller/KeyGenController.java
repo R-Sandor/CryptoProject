@@ -1,7 +1,7 @@
 package dev.findfirst.CryptoProjectFinal.controller;
 
-import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator;
-import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.HexKeys;
+import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DHKeyGenerator;
+import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DHKeyGenerator.HexKeys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class KeyGenController {
 
-  @Autowired KeyGenerator keyGen;
+  @Autowired DHKeyGenerator keyGen;
 
   @RequestMapping(
       value = "create/{alpha}/{keysize}",

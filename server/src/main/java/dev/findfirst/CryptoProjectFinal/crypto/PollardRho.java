@@ -1,6 +1,6 @@
 package dev.findfirst.CryptoProjectFinal.crypto;
 
-import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.BigKeys;
+import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DHKeyGenerator.DHKeys;
 import java.math.BigInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  *
  * <p>Borrowed algorithm from Wikipedia adapted from C++ to Java.
  *
- * @see https://en.wikipedia.org/wiki/Pollard%27s_rho_algorithm 
+ * @see https://en.wikipedia.org/wiki/Pollard%27s_rho_algorithm
  */
 @Component
 @Slf4j
@@ -45,7 +45,7 @@ public class PollardRho implements SolveTimer {
     }
   }
 
-  public String solvePollardRho(BigKeys keys) {
+  public String solveDHPollardRho(DHKeys keys) {
     log.debug("a {}, b {}, p {}, privKey {}", keys.a(), keys.kpub(), keys.p(), keys.kpriv());
     BigInteger alpha = keys.a();
     BigInteger beta = keys.kpub();
@@ -75,9 +75,9 @@ public class PollardRho implements SolveTimer {
   }
 
   @Override
-  public long solveTime(BigKeys keys) {
+  public long solveTime(DHKeys keys) {
     long start = System.currentTimeMillis();
-    String x = solvePollardRho(keys);
+    String x = solveDHPollardRho(keys);
     log.debug("Key Found: {}", x);
     return System.currentTimeMillis() - start;
   }
