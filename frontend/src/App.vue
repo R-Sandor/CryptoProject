@@ -183,13 +183,13 @@ export default {
       this.buttons[buttonIdx].state = !this.buttons[buttonIdx].state;
       switch (buttonIdx) {
         case 0:
-          this.selected = this.dhBruteForce.value;
+          this.selectedCode = this.dhBruteForce.value;
           break;
         case 1:
-          this.selected = this.babystep.value;
+          this.selectedCode = this.babystep.value;
           break;
         case 2:
-          this.selected = this.pollardRho.value;
+          this.selectedCode = this.pollardRho.value;
           break;
       }
       $("#" + this.buttons[buttonIdx].id).addClass("active");
