@@ -1,7 +1,7 @@
 <template>
   <button
     :id="button.id"
-    @click="$emit('algselect', button.idx)"
+    @click="$emit('codeselect', button.idx)"
     type="button"
     data-bs-toggle="button"
     class="btn btn-outline-secondary"

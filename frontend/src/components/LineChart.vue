@@ -73,6 +73,10 @@ export default {
       type: Object,
       default: () => {},
     },
+    title: {
+      default: "Diffie-Hellman",
+      type: String,
+    },
   },
   data() {
     return {
@@ -91,6 +95,12 @@ export default {
               display: true,
               text: "Time",
             },
+          },
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: this.title,
           },
         },
       },

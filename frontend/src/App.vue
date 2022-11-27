@@ -3,23 +3,8 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-2 nopadding">
-        <div class="list-group algselect">
-          <a href="#" class="list-group-item list-group-item-action active"
-            >Diffie-Hellman</a
-          >
-          <a href="#" class="list-group-item list-group-item-action disabled"> RSA </a>
-          <a href="#" class="list-group-item list-group-item-action disabled">
-            Elliptic Curve</a
-          >
-        </div>
-        <div class="card sysStat">
-          <div class="card-header">System Statistics</div>
-          <ul class="list-group list-group-flush" style="text-align: left">
-            <li class="list-group-item">CPU Speed: {{ cpuSpeed() }}GHz</li>
-            <li class="list-group-item">Cores: {{ stats.logicalProcessorCount }}</li>
-            <li class="list-group-item">{{ sysMem() }}</li>
-          </ul>
-        </div>
+        <AlgorithmSelectVue :alg="selectedAlg" @alg-select="algSelect" />
+        <SystemStatsVue :stats="this.stats" />
       </div>
       <div class="col-10 .chart-container">
         <LineChartVue :chartData="chartData" />
@@ -27,13 +12,22 @@
     </div>
     <div class="row flex-grow-1">
       <div class="col-2 nopadding">
-        <DhKeyGeneratorVue :init-alpha="alpha" :init-bit-size="bitsize" />
+        <DhKeyGeneratorVue
+          v-if="this.selectedAlg == 'diffieAlg'"
+          :init-alpha="alpha"
+          :init-bit-size="bitsize"
+        />
+        <RsaKeyGeneratorVue
+          v-if="this.selectedAlg == 'rsaAlg'"
+          :init-alpha="alpha"
+          :init-bit-size="bitsize"
+        />
       </div>
       <div class="col-10 codeSel2">
         <div class="codeSel">
           <div class="btn-group" data-toggle="buttons" role="group">
             <div class="btn-group" v-for="button in buttons" :key="button.id">
-              <AlgorithmButton @algselect="codeSelection" :button="button" />
+              <AlgorithmButton @codeselect="codeSelection" :button="button" />
             </div>
           </div>
         </div>
@@ -45,17 +39,20 @@
 
 <script>
 /* eslint-disable */
+import $ from "jquery";
 import AlgorithmButton from "./components/AlgorithmButton.vue";
-import LineChartVue from "./components/LineChart.vue";
+import AlgorithmSelectVue from "./components/AlgorithmSelect.vue";
+import api from "./Api";
+import babyStepGaintStep from "raw-loader!./assets/BabyStepGiantStep.java";
 import dhBruteForce from "raw-loader!./assets/DiffieHellmanBruteForce.java";
 import DhKeyGeneratorVue from "./components/DhKeyGenerator.vue";
-import babyStepGaintStep from "raw-loader!./assets/BabyStepGiantStep.java";
+import LineChartVue from "./components/LineChart.vue";
+import NavBar from "./components/NavBar.vue";
 import pollardRho from "raw-loader!./assets/PollardRho.java";
 import "prismjs/components/prism-java";
 import Prism from "prismjs";
-import api from "./Api";
-import $ from "jquery";
-import NavBar from "./components/NavBar.vue";
+import RsaKeyGeneratorVue from "./components/RsaKeyGenerator.vue";
+import SystemStatsVue from "./components/SystemStats.vue";
 export default {
   name: "App",
   data() {
@@ -68,7 +65,7 @@ export default {
       babystep: { name: "babystep", value: babyStepGaintStep },
       pollardRho: { name: "pollardRho", value: pollardRho },
       selectedCode: dhBruteForce,
-      selectedCracker: "Diffie-Hellman",
+      selectedAlg: "diffieAlg",
       p: "",
       e: "",
       d: "",
@@ -84,11 +81,8 @@ export default {
   },
   computed: {},
   methods: {
-    sysMem() {
-      return Math.round((this.stats.memory / 1000000000) * 100) / 100;
-    },
-    cpuSpeed() {
-      return this.stats.maxFreq / 1000000000;
+    algSelect(algType) {
+      this.selectedAlg = algType;
     },
     codeSelection(buttonIdx) {
       console.info(buttonIdx);
@@ -149,17 +143,20 @@ export default {
   },
   components: {
     AlgorithmButton,
+    AlgorithmSelectVue,
     DhKeyGeneratorVue,
     LineChartVue,
     NavBar,
     Prism,
+    RsaKeyGeneratorVue,
+    SystemStatsVue,
   },
   watch: {},
   mounted() {
-    // api.getStats().then((response) => {
-    //   this.stats = response ? response.data : null;
-    //   this.normalizedSpeed = response.maxFreq / 1000000000;
-    // });
+    api.getStats().then((response) => {
+      this.stats = response ? response.data : null;
+      this.normalizedSpeed = response.maxFreq / 1000000000;
+    });
     // set bruteforce to be active by default
     $("#" + this.buttons[0].id).addClass("active");
     window.Prism = window.Prism || {};
@@ -210,20 +207,6 @@ body {
   margin: auto;
   height: 100%;
   width: 100%;
-}
-
-.algselect {
-  /* padding-left: 0; */
-  margin-left: 0;
-  padding-left: 0;
-  border-radius: 0 !important;
-}
-
-.sysStat {
-  text-align: left !important;
-  /* background-color: #6c757d; */
-  border-radius: 0 !important;
-  margin-top: 25px;
 }
 
 .nopadding {
