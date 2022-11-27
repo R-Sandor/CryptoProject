@@ -2,9 +2,8 @@ package dev.findfirst.CryptoProjectFinal.crypto;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
@@ -117,5 +116,12 @@ public class KeyGenerator {
   public record KeysRec(long kpub, long kpriv, long a, long p) {}
 
   public record BigKeys(
-      BigInteger kpub, BigInteger kpriv, BigInteger a, BigInteger p, int bitsize) {}
+      BigInteger kpub, BigInteger kpriv, BigInteger a, BigInteger p, int bitsize) {
+    public HexKeys getHexKeys() {
+      return new HexKeys(
+          kpub.toString(16), kpriv.toString(16), a.toString(16), p.toString(16), bitsize);
+    }
+  }
+
+  public record HexKeys(String kpub, String kpriv, String a, String p, int bitsize) {}
 }
