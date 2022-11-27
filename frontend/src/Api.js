@@ -24,5 +24,9 @@ export default {
 
   getStats(){ 
     return this.execute("GET", "sys/stats")
+  },
+
+  generateKey(alpha, bitsize) {
+    return this.execute("GET", "keygen/create/"+ alpha + "/" + bitsize)
   }
 }

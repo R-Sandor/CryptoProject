@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
  * Pollard's Rho Method. Has the space advantage over Baby Step Gaint Step, but depending on the
  * prime it can be more performant i.e. in the case of a smaller prime factors.
  *
- * <p>Borrowed algorithm from GeeksForGeeks adapted for larger keys.
+ * <p>Borrowed algorithm from Wikipedia adapted from C++ to Java.
  *
- * @see https://www.geeksforgeeks.org/pollards-rho-algorithm-prime-factorization/
+ * @see https://en.wikipedia.org/wiki/Pollard%27s_rho_algorithm 
  */
 @Component
 @Slf4j
@@ -28,19 +28,19 @@ public class PollardRho implements SolveTimer {
     public Axb {
       int xtmp = x.mod(BigInteger.valueOf(3)).intValue();
       switch (xtmp) {
-        case 0:
+        case 0 -> {
           x = x.multiply(x).mod(N);
           a = a.multiply(BigInteger.TWO).mod(n);
           b = b.multiply(BigInteger.TWO).mod(n);
-          break;
-        case 1:
+        }
+        case 1 -> {
           x = x.multiply(alpha).mod(N);
           a = a.add(BigInteger.ONE).mod(n);
-          break;
-        case 2:
+        }
+        case 2 -> {
           x = x.multiply(beta).mod(N);
           b = b.add(BigInteger.ONE).mod(n);
-          break;
+        }
       }
     }
   }
@@ -48,14 +48,12 @@ public class PollardRho implements SolveTimer {
   public String solvePollardRho(BigKeys keys) {
     log.debug("a {}, b {}, p {}, privKey {}", keys.a(), keys.kpub(), keys.p(), keys.kpriv());
     BigInteger alpha = keys.a();
-    BigInteger beta =  keys.kpub();
+    BigInteger beta = keys.kpub();
     BigInteger N = keys.p();
     BigInteger n = N.subtract(BigInteger.ONE);
     BigInteger x = BigInteger.ONE, a = BigInteger.ZERO, b = BigInteger.ZERO;
     BigInteger X = x, A = a, B = b;
-    for (BigInteger i = BigInteger.ONE;
-        i.compareTo(n) < 0;
-        i = i.add(BigInteger.ONE)) {
+    for (BigInteger i = BigInteger.ONE; i.compareTo(n) < 0; i = i.add(BigInteger.ONE)) {
       Axb axb = new Axb(x, a, b, n, N, alpha, beta);
       x = axb.x;
       a = axb.a;

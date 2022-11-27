@@ -54,6 +54,9 @@
               <div class="col-sm-3 nopadding">
                 <textarea
                   readonly
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="bottom"
+                  :title="p"
                   v-model="p"
                   class="form-control"
                   id="p"
@@ -72,10 +75,13 @@
                   placeholder="4-2048"
                 />
               </div>
-              <label for="e" class="col-sm-1 form-label">e</label>
+              <label for="e" class="col-sm-1 form-label">&beta;</label>
               <div class="col-sm-3 nopadding">
                 <textarea
                   v-model="e"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="bottom"
+                  :title="e"
                   readonly
                   class="form-control"
                   id="p"
@@ -89,6 +95,9 @@
               <div class="col-sm-3 nopadding">
                 <textarea
                   v-model="d"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="bottom"
+                  :title="d"
                   readonly
                   class="form-control"
                   id="d"
@@ -222,7 +231,16 @@ export default {
       }, i * 250);
     },
     generateKey() {
-      console.log("submit");
+      api.generateKey(this.alpha, this.bitsize).then((response) => {
+        if (response.status == 200) {
+          let key = response.data;
+          this.p = key.p;
+          this.e = key.kpub;
+          this.d = key.kpriv;
+
+          console.log(key);
+        }
+      });
     },
   },
   components: {
@@ -258,9 +276,9 @@ export default {
         },
       ],
     };
-    // this.setBabyStepData();
-    // this.setBruteForce();
-    // this.setPollardRho();
+    this.setBabyStepData();
+    this.setBruteForce();
+    this.setPollardRho();
   },
 };
 </script>
