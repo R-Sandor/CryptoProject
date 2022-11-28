@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     generateKey() {
-      api.generateKey(this.alpha, this.bitsize).then((response) => {
+      api.generateDhKey(this.alpha, this.bitsize).then((response) => {
         if (response.status == 200) {
           let key = response.data;
           this.p = key.p;

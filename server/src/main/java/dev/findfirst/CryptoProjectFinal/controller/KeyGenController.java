@@ -2,6 +2,8 @@ package dev.findfirst.CryptoProjectFinal.controller;
 
 import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DHKeyGenerator;
 import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DHKeyGenerator.HexKeys;
+import dev.findfirst.CryptoProjectFinal.crypto.rsa.RsaKeyGenerator;
+import dev.findfirst.CryptoProjectFinal.crypto.rsa.RsaKeyGenerator.RsaHexKeys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -15,13 +17,28 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class KeyGenController {
 
-  @Autowired DHKeyGenerator keyGen;
+  @Autowired DHKeyGenerator dhKeyGen;
+  @Autowired RsaKeyGenerator rsaKeyGen;
 
   @RequestMapping(
-      value = "create/{alpha}/{keysize}",
+      value = "dh/{alpha}/{keysize}",
       method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public HexKeys getBabyStepPerformance(@PathVariable long alpha, @PathVariable int keysize) {
-    return keyGen.generateBigKeys(alpha, keysize).getHexKeys();
+  public HexKeys getDhKeys(@PathVariable long alpha, @PathVariable int keysize) {
+    return dhKeyGen.generateBigKeys(alpha, keysize).getHexKeys();
+  }
+
+  /**
+   * Gets a RSA key of a given size.
+   *
+   * @param keysize the desired keysize
+   * @return the keys
+   */
+  @RequestMapping(
+      value = "rsa/{keysize}",
+      method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public RsaHexKeys getRsaKeys(@PathVariable int keysize) {
+    return rsaKeyGen.generateKeys(keysize).getHexKeys();
   }
 }

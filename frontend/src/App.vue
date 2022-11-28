@@ -19,7 +19,6 @@
         />
         <RsaKeyGeneratorVue
           v-if="this.selectedAlg == 'rsaAlg'"
-          :init-alpha="alpha"
           :init-bit-size="bitsize"
         />
       </div>
@@ -70,7 +69,7 @@ export default {
       e: "",
       d: "",
       alpha: 2,
-      bitsize: 4,
+      bitsize: 16,
       buttons: [
         { id: "btnForce", idx: 0, caption: "Brute Force", state: true },
         { id: "btnBaby", idx: 1, caption: "Baby Step Gaint Step", state: false },
@@ -179,9 +178,9 @@ export default {
         },
       ],
     };
-    // this.setBabyStepData();
-    // this.setBruteForce();
-    // this.setPollardRho();
+    this.setBabyStepData();
+    this.setBruteForce();
+    this.setPollardRho();
   },
 };
 </script>
