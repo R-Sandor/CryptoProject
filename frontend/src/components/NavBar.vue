@@ -11,7 +11,7 @@
         />
         <!-- <inline> <h2>Crpyto Analysis Project</h2> </inline> -->
       </a>
-      Raphael J. Sandor - Crpyto Analysis Project
+      Raphael J. Sandor - Crypto Analysis Project
     </a>
   </nav>
 </template>
