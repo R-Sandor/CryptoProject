@@ -25,16 +25,16 @@ public class CryptoUtils {
     return (long) ((Math.random() * (pMinus2 - min)) + min);
   }
 
-  public static long fastMod(long c, long l, long pt) {
+  public static long fastMod(long a, long power, long n) {
     long retVal = 1; // Initialize result
-    c = c % pt; // Update c if it is more than or equal to p
-    while (l > 0) {
+    a = a % n; // Update c if it is more than or equal to p
+    while (power > 0) {
       // If y is odd, multiply x with result
-      if ((l & 1) > 0) retVal = (retVal * c) % pt;
+      if ((power & 1) > 0) retVal = (retVal * a) % n;
 
       // y must be even now
-      l = l >> 1; // y = y/2
-      c = (c * c) % pt;
+      power = power >> 1; // y = y/2
+      a = (a * a) % n;
     }
     return retVal;
   }
