@@ -1,5 +1,7 @@
 package dev.findfirst.CryptoProjectFinal.controller;
 
+import dev.findfirst.CryptoProjectFinal.crypto.PollardRho;
+import dev.findfirst.CryptoProjectFinal.crypto.rsa.RsaKeyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -7,13 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.findfirst.CryptoProjectFinal.crypto.PollardRho;
-import dev.findfirst.CryptoProjectFinal.crypto.rsa.RsaKeyGenerator;
-
 @RestController
 @RequestMapping("api/rsa/")
 public class RsaController {
-    
+
   @Autowired PollardRho pollardRho;
   @Autowired RsaKeyGenerator keyGen;
 
@@ -25,5 +24,4 @@ public class RsaController {
     // if the bit size is greater than 31 bits then BigIntegers need to be used.
     return pollardRho.solveTime(keyGen.generateKeys(keysize));
   }
-
 }

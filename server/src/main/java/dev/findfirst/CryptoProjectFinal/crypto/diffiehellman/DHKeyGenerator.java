@@ -1,5 +1,9 @@
 package dev.findfirst.CryptoProjectFinal.crypto.diffiehellman;
 
+import static dev.findfirst.CryptoProjectFinal.crypto.CryptoUtils.fastMod;
+import static dev.findfirst.CryptoProjectFinal.crypto.CryptoUtils.genDprime;
+import static dev.findfirst.CryptoProjectFinal.crypto.CryptoUtils.generatePrime;
+
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import lombok.extern.slf4j.Slf4j;
@@ -8,72 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class DHKeyGenerator {
-
-  public long genRandomInBitSize(int keySize) {
-    --keySize; // accounting the operator applied to the base.
-    long max = 2 << keySize;
-    long min = (2 << keySize - 1) + 1;
-    return (long) ((Math.random() * (max - min)) + min);
-  }
-
-  /**
-   * The same as generate genRandomInBitSize but accounts for the result of p.
-   *
-   * @param keySize the bit size
-   * @return a valid priv prime value
-   */
-  public long genDprime(int keySize, long p) {
-    --keySize; // accounting the operator applied to the base.
-    long pMinus2 = p - 2;
-    long min = (2 << keySize - 1) + 1;
-    return (long) ((Math.random() * (pMinus2 - min)) + min);
-  }
-
-  public long fastMod(long c, long l, long pt) {
-    long retVal = 1; // Initialize result
-    c = c % pt; // Update c if it is more than or equal to p
-    while (l > 0) {
-      // If y is odd, multiply x with result
-      if ((l & 1) > 0) retVal = (retVal * c) % pt;
-
-      // y must be even now
-      l = l >> 1; // y = y/2
-      c = (c * c) % pt;
-    }
-    return retVal;
-  }
-
-  /**
-   * Miller-Rabin Primality Test
-   *
-   * @param pt prime candidate
-   * @param s security paramater
-   * @return if it likely a prime
-   */
-  public boolean primeTest(long pt, int s) {
-    long z = fastMod(2l, pt - 1, pt);
-    if (z == 1) return true;
-    for (int i = 0; i < s - 1; i++) {
-      if (z == pt - 1) return true;
-      z = fastMod(z, 2, pt);
-    }
-    if (z == pt - 1) return true;
-    return false;
-  }
-
-  /**
-   * Generates a prime of a given size that is prime.
-   *
-   * @param primeSize
-   * @return
-   */
-  public long generatePrime(int primeSize) {
-    long prime = genRandomInBitSize(primeSize);
-    while (!primeTest(prime, 4)) {
-      prime = genRandomInBitSize(primeSize);
-    }
-    return prime;
-  }
 
   /**
    * Generate keys kpub, kpriv, and p parameter

@@ -2,7 +2,6 @@ package dev.findfirst.CryptoProjectFinal.crypto;
 
 import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DHKeyGenerator.DHKeys;
 import dev.findfirst.CryptoProjectFinal.crypto.rsa.RsaKeyGenerator.RsaKeys;
-
 import java.math.BigInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -85,27 +84,29 @@ public class PollardRho implements SolveTimer {
   }
 
   /* TODO: Simplify the two keys to use a generic key for
-   * for the solveTimes were applicable. 
-  */
+   * for the solveTimes were applicable.
+   */
   /**
    * Same as SolveTimers method except with an RSA Key.
+   *
    * @param keys the private/public key record
    * @return solve time
    */
   public long solveTime(RsaKeys keys) {
-   long start = System.currentTimeMillis();
+    long start = System.currentTimeMillis();
     String x = solveRsaPollardRho(keys);
     log.debug("Key Found: {}", x);
     return System.currentTimeMillis() - start;
-}
+  }
 
-/**
- * Same as solveDHPollardRho 
- * @param keys private/public RSA key
- * @return found key value.
- */
-private String solveRsaPollardRho(RsaKeys keys) {
-    log.debug(" b {}, p {}, privKey {}",  keys.e(), keys.p(), keys.d());
+  /**
+   * Same as solveDHPollardRho
+   *
+   * @param keys private/public RSA key
+   * @return found key value.
+   */
+  private String solveRsaPollardRho(RsaKeys keys) {
+    log.debug(" b {}, p {}, privKey {}", keys.e(), keys.p(), keys.d());
     BigInteger alpha = BigInteger.valueOf(2);
     BigInteger beta = keys.e();
     BigInteger N = keys.p();
@@ -131,5 +132,5 @@ private String solveRsaPollardRho(RsaKeys keys) {
       }
     }
     return "-1";
-}
+  }
 }
