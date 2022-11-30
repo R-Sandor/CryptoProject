@@ -7,7 +7,7 @@
         <SystemStatsVue :stats="this.stats" />
       </div>
       <div class="col-10 .chart-container">
-        <LineChartVue :chartData="chartData" />
+        <LineChartVue ref="line" :chartData="chartData" />
       </div>
     </div>
     <div class="row flex-grow-1">
@@ -46,6 +46,7 @@ import babyStepGaintStep from "raw-loader!./assets/BabyStepGiantStep.java";
 import dhBruteForce from "raw-loader!./assets/DiffieHellmanBruteForce.java";
 import DhKeyGeneratorVue from "./components/DhKeyGenerator.vue";
 import LineChartVue from "./components/LineChart.vue";
+import { clone, cloneDeep } from "lodash"; // Alternatively: Import just the clone methods from lodash
 import NavBar from "./components/NavBar.vue";
 import pollardRho from "raw-loader!./assets/PollardRho.java";
 import "prismjs/components/prism-java";
@@ -76,6 +77,7 @@ export default {
         { id: "btnPollard", idx: 2, caption: "Pollard's Rho method", state: false },
       ],
       chartData: {},
+      diffieDataset: {},
     };
   },
   computed: {},
@@ -107,37 +109,77 @@ export default {
         Prism.highlightAll();
       }, 10);
     },
-    setBabyStepData() {
+    async setBabyStepData() {
       let idx = 0;
+      const promiseArray = [];
       for (let i = 4; i <= 32; i += 4) {
-        this.buildData("dh/babyStep", 1, i, idx);
+        promiseArray.push(this.buildData("dh/babyStep", 1, i, idx));
         idx++;
       }
+      await Promise.all(promiseArray);
+      return Promise.resolve("SetBabyStep done");
     },
-    setBruteForce() {
+    async setBruteForce() {
       let idx = 0;
+      const promiseArray = [];
       for (let i = 4; i <= 20; i += 4) {
-        this.buildData("dh/bf", 0, i, idx);
+        promiseArray.push(this.buildData("dh/bf", 0, i, idx));
         idx++;
       }
+      await Promise.all(promiseArray);
+      return Promise.resolve("SetBruteForce done");
     },
-    setPollardRho() {
+    async setPollardRho() {
       let idx = 0;
+      const promiseArray = [];
       for (let i = 4; i <= 32; i += 4) {
-        this.buildData("dh/pr", 2, i, idx);
+        promiseArray.push(this.buildData("dh/pr", 2, i, idx));
         idx++;
       }
+      await Promise.all(promiseArray);
+      return Promise.resolve("SetPollardRho done");
     },
     buildData(req, ds, i, idx) {
       const me = this;
-      setTimeout(function () {
-        api.runAlgorithm(req, i).then((response) => {
-          let time = response ? response.data : null;
-          console.log(idx);
-          if (time) me.chartData.datasets[ds].data[idx] = time;
-          console.log(time);
-        });
-      }, i * 250);
+      return new Promise((resolve) => {
+        setTimeout(function () {
+          api.runAlgorithm(req, i).then((response) => {
+            let time = response ? response.data : null;
+            console.log(idx);
+            if (time) me.chartData.datasets[ds].data[idx] = time;
+            console.log(time);
+            resolve(time);
+          });
+        }, i * 100);
+      });
+    },
+    async setupDataset() {
+      const asyncFunctions = [
+        this.setBruteForce(),
+        this.setBabyStepData(),
+        this.setPollardRho(),
+      ];
+      await Promise.all(asyncFunctions);
+      // await this.setBruteForce();
+    },
+    resetData() {
+      this.chartData = {
+        labels: ["4", "8", "12", "16", "20", "24", "28", "32"],
+        datasets: [
+          {
+            label: "Brute Force",
+            data: [],
+          },
+          {
+            label: "Baby Step Giant Step",
+            data: [],
+          },
+          {
+            label: "Pollard's Rho",
+            data: [],
+          },
+        ],
+      };
     },
   },
   components: {
@@ -178,9 +220,16 @@ export default {
         },
       ],
     };
-    this.setBabyStepData();
-    this.setBruteForce();
-    this.setPollardRho();
+    this.setupDataset().then(() => {
+      console.log("DONE DONE");
+      this.diffieDataset = _.cloneDeep(this.chartData);
+      console.log(this.diffieDataset);
+      // setTimeout(() => (this.chartData.datasets = {}), 3000);
+      // LineChartVue.update();
+      // setTimeout(() => (this.chartData = this.diffieDataset), 6000);
+      // this.LineChartVue.removeData("");
+      console.log(this.$refs.line);
+    });
   },
 };
 </script>

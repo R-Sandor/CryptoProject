@@ -110,6 +110,9 @@ export default {
     mounted() {
       this.addPlugin(Colors);
     },
+    test() {
+      console.log("here");
+    },
   },
 };
 </script>
