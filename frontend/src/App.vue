@@ -1,123 +1,32 @@
 <template>
-  <nav class="navbar navbar-light banner">
-    <a class="navbar-brand" href="#">
-      <a class="navbar-brand" href="#">
-        <img
-          src="./assets/ff_header2.png"
-          width="60"
-          height="30"
-          alt=""
-          class="d-inline-block align-top"
-        />
-        <!-- <inline> <h2>Crpyto Analysis Project</h2> </inline> -->
-      </a>
-      Raphael J. Sandor - Crpyto Analysis Project
-    </a>
-  </nav>
+  <NavBar />
   <div class="container-fluid">
     <div class="row">
       <div class="col-2 nopadding">
-        <div class="list-group algselect">
-          <a href="#" class="list-group-item list-group-item-action active"
-            >Diffie-Hellman</a
-          >
-          <a href="#" class="list-group-item list-group-item-action disabled"> RSA </a>
-          <a href="#" class="list-group-item list-group-item-action disabled">
-            Elliptic Curve</a
-          >
-        </div>
-        <div class="card sysStat">
-          <div class="card-header">System Statistics</div>
-          <ul class="list-group list-group-flush" style="text-align: left">
-            <li class="list-group-item">CPU Speed: {{ cpuSpeed() }}GHz</li>
-            <li class="list-group-item">Cores: {{ stats.logicalProcessorCount }}</li>
-            <li class="list-group-item">{{ sysMem() }}</li>
-          </ul>
-        </div>
+        <AlgorithmSelectVue :alg="selectedAlg" @alg-select="algSelect" />
+        <SystemStatsVue :stats="this.stats" />
       </div>
       <div class="col-10 .chart-container">
-        <LineChartVue :chartData="chartData" />
+        <LineChartVue ref="line" :chartData="chartData" />
       </div>
     </div>
     <div class="row flex-grow-1">
       <div class="col-2 nopadding">
-        <div class="keyGen">
-          Key Generator - {{ selectedCracker }}
-          <hr />
-          <form @submit.prevent>
-            <div class="form-group row">
-              <label for="alpha" class="col-sm-2 col-form-label">&alpha;</label>
-              <div class="col-sm-5">
-                <input v-model="alpha" type="number" class="form-control" id="alpha" />
-              </div>
-              <label for="p" class="col-sm-1 form-label">p</label>
-              <div class="col-sm-3 nopadding">
-                <textarea
-                  readonly
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="bottom"
-                  :title="p"
-                  v-model="p"
-                  class="form-control"
-                  id="p"
-                  rows="1"
-                ></textarea>
-              </div>
-            </div>
-            <div class="row">
-              <label for="bitlength" class="col-sm-2 col-form-label">Bitsize</label>
-              <div class="col-sm-5">
-                <input
-                  v-model="bitsize"
-                  type="number"
-                  class="form-control"
-                  id="bitLength"
-                  placeholder="4-2048"
-                />
-              </div>
-              <label for="e" class="col-sm-1 form-label">&beta;</label>
-              <div class="col-sm-3 nopadding">
-                <textarea
-                  v-model="e"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="bottom"
-                  :title="e"
-                  readonly
-                  class="form-control"
-                  id="p"
-                  rows="1"
-                ></textarea>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-7"></div>
-              <div class="col-sm-1">d</div>
-              <div class="col-sm-3 nopadding">
-                <textarea
-                  v-model="d"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="bottom"
-                  :title="d"
-                  readonly
-                  class="form-control"
-                  id="d"
-                  rows="1"
-                ></textarea>
-              </div>
-            </div>
-            <div class="row nopadding">
-              <button @click="generateKey()" class="btn btn-primary mb-3">
-                Generate Key
-              </button>
-            </div>
-          </form>
-        </div>
+        <DhKeyGeneratorVue
+          v-if="this.selectedAlg == 'diffieAlg'"
+          :init-alpha="alpha"
+          :init-bit-size="bitsize"
+        />
+        <RsaKeyGeneratorVue
+          v-if="this.selectedAlg == 'rsaAlg'"
+          :init-bit-size="bitsize"
+        />
       </div>
       <div class="col-10 codeSel2">
         <div class="codeSel">
           <div class="btn-group" data-toggle="buttons" role="group">
             <div class="btn-group" v-for="button in buttons" :key="button.id">
-              <AlgorithmButton @algselect="codeSelection" :button="button" />
+              <AlgorithmButton @codeselect="codeSelection" :button="button" />
             </div>
           </div>
         </div>
@@ -129,17 +38,23 @@
 
 <script>
 /* eslint-disable */
+import $ from "jquery";
 import AlgorithmButton from "./components/AlgorithmButton.vue";
-import LineChartVue from "./components/LineChart.vue";
-import dhBruteForce from "raw-loader!./assets/DiffieHellmanBruteForce.java";
+import AlgorithmSelectVue from "./components/AlgorithmSelect.vue";
+import api from "./Api";
 import babyStepGaintStep from "raw-loader!./assets/BabyStepGiantStep.java";
+import dhBruteForce from "raw-loader!./assets/DiffieHellmanBruteForce.java";
+import DhKeyGeneratorVue from "./components/DhKeyGenerator.vue";
+import rsaFermats from "raw-loader!./assets/FermatsFactorization.java";
+import LineChartVue from "./components/LineChart.vue";
+import { clone, cloneDeep } from "lodash"; // Alternatively: Import just the clone methods from lodash
+import NavBar from "./components/NavBar.vue";
 import pollardRho from "raw-loader!./assets/PollardRho.java";
 import "prismjs/components/prism-java";
 import Prism from "prismjs";
-import api from "./Api";
-// import "prismjs/themes/prism.css"; // you can change
-import axios from "axios";
-import $ from "jquery";
+import rsaBruteForce from "raw-loader!./assets/RsaBruteForce.java";
+import RsaKeyGeneratorVue from "./components/RsaKeyGenerator.vue";
+import SystemStatsVue from "./components/SystemStats.vue";
 export default {
   name: "App",
   data() {
@@ -147,32 +62,42 @@ export default {
       normalizedSpeed: 0,
       memory: 0,
       stats: {},
-      test: "cool",
       dhBruteForce: { name: "bruteForce", value: dhBruteForce },
+      rsaBruteForce: { name: "rsaBruteForce", value: rsaBruteForce },
       babystep: { name: "babystep", value: babyStepGaintStep },
+      rsaFermats: { name: "fermats", value: rsaFermats },
       pollardRho: { name: "pollardRho", value: pollardRho },
       selectedCode: dhBruteForce,
-      selectedCracker: "Diffie-Hellman",
+      selectedAlg: "diffieAlg",
       p: "",
       e: "",
       d: "",
       alpha: 2,
-      bitsize: 4,
-      buttons: [
-        { id: "btnForce", idx: 0, caption: "Brute Force", state: true },
-        { id: "btnBaby", idx: 1, caption: "Baby Step Gaint Step", state: false },
-        { id: "btnPollard", idx: 2, caption: "Pollard's Rho method", state: false },
-      ],
+      bitsize: 16,
       chartData: {},
+      diffieDataset: {},
+      rsaDataset: {},
+      buttons: [
+        { id: "btnAlg1", idx: 0, caption: "Brute Force", state: true },
+        { id: "btnAlg2", idx: 1, caption: "Baby Step Gaint Step", state: false },
+        { id: "btnAlg3", idx: 2, caption: "Pollard's Rho method", state: false },
+      ],
+      diffieButtons: [
+        { id: "btnAlg1", idx: 0, caption: "Brute Force", state: true },
+        { id: "btnAlg2", idx: 1, caption: "Baby Step Gaint Step", state: false },
+        { id: "btnAlg3", idx: 2, caption: "Pollard's Rho method", state: false },
+      ],
+      rsaButttons: [
+        { id: "btnAlg1", idx: 0, caption: "RSA Brute Force", state: true },
+        { id: "btnAlg2", idx: 1, caption: "Fermats Factorization", state: false },
+        { id: "btnAlg3", idx: 2, caption: "Pollard's Rho method", state: false },
+      ],
     };
   },
   computed: {},
   methods: {
-    sysMem() {
-      return Math.round((this.stats.memory / 1000000000) * 100) / 100;
-    },
-    cpuSpeed() {
-      return this.stats.maxFreq / 1000000000;
+    algSelect(algType) {
+      this.selectedAlg = algType;
     },
     codeSelection(buttonIdx) {
       console.info(buttonIdx);
@@ -181,16 +106,30 @@ export default {
       this.buttons[1].state = false;
       this.buttons[2].state = false;
       this.buttons[buttonIdx].state = !this.buttons[buttonIdx].state;
-      switch (buttonIdx) {
-        case 0:
-          this.selectedCode = this.dhBruteForce.value;
-          break;
-        case 1:
-          this.selectedCode = this.babystep.value;
-          break;
-        case 2:
-          this.selectedCode = this.pollardRho.value;
-          break;
+      if (this.algSelect == "diffieAlg") {
+        switch (buttonIdx) {
+          case 0:
+            this.selectedCode = this.dhBruteForce.value;
+            break;
+          case 1:
+            this.selectedCode = this.babystep.value;
+            break;
+          case 2:
+            this.selectedCode = this.pollardRho.value;
+            break;
+        }
+      } else {
+        switch (buttonIdx) {
+          case 0:
+            this.selectedCode = this.rsaBruteForce.value;
+            break;
+          case 1:
+            this.selectedCode = this.rsaFermats.value;
+            break;
+          case 2:
+            this.selectedCode = this.pollardRho.value;
+            break;
+        }
       }
       $("#" + this.buttons[buttonIdx].id).addClass("active");
       // Need to give prism just a little bit of time to let the code load.
@@ -198,57 +137,164 @@ export default {
         Prism.highlightAll();
       }, 10);
     },
-    setBabyStepData() {
+    async setBabyStepData() {
       let idx = 0;
+      const promiseArray = [];
       for (let i = 4; i <= 32; i += 4) {
-        this.buildData("dh/babyStep", 1, i, idx);
+        promiseArray.push(this.buildData("dh/babyStep/" + this.alpha, 1, i, idx));
         idx++;
       }
+      await Promise.all(promiseArray);
+      return Promise.resolve("SetBabyStep done");
     },
-    setBruteForce() {
+    async setBruteForce() {
       let idx = 0;
+      const promiseArray = [];
       for (let i = 4; i <= 20; i += 4) {
-        this.buildData("dh/bf", 0, i, idx);
+        promiseArray.push(this.buildData("dh/bf/" + this.alpha, 0, i, idx));
         idx++;
       }
+      await Promise.all(promiseArray);
+      return Promise.resolve("SetBruteForce done");
     },
-    setPollardRho() {
+    async setDhPollardRho() {
       let idx = 0;
+      const promiseArray = [];
       for (let i = 4; i <= 32; i += 4) {
-        this.buildData("dh/pr", 2, i, idx);
+        promiseArray.push(this.buildData("dh/pr/" + this.alpha, 2, i, idx));
         idx++;
       }
+      await Promise.all(promiseArray);
+      return Promise.resolve("SetPollardRho done");
+    },
+    async setRsaPollardRho() {
+      let idx = 0;
+      const promiseArray = [];
+      for (let i = 4; i <= 64; i += 4) {
+        promiseArray.push(this.buildData("rsa/pr", 2, i, idx));
+        idx++;
+      }
+      await Promise.all(promiseArray);
+      return Promise.resolve("SetRsaPollardRho - done");
+    },
+    async setFermats() {
+      let idx = 0;
+      const promiseArray = [];
+      for (let i = 4; i <= 64; i += 4) {
+        promiseArray.push(this.buildData("rsa/fermats", 1, i, idx));
+        idx++;
+      }
+      await Promise.all(promiseArray);
+      return Promise.resolve("SetFermats - done");
+    },
+    async setRsaBruteForce() {
+      let idx = 0;
+      const promiseArray = [];
+      for (let i = 4; i <= 20; i += 4) {
+        promiseArray.push(this.buildData("rsa/bf", 0, i, idx));
+        idx++;
+      }
+      await Promise.all(promiseArray);
+      return Promise.resolve("SetRsaBrute - done");
     },
     buildData(req, ds, i, idx) {
       const me = this;
-      setTimeout(function () {
-        api.runAlgorithm(req, i).then((response) => {
-          let time = response ? response.data : null;
-          console.log(idx);
-          if (time) me.chartData.datasets[ds].data[idx] = time;
-          console.log(time);
-        });
-      }, i * 250);
-    },
-    generateKey() {
-      api.generateKey(this.alpha, this.bitsize).then((response) => {
-        if (response.status == 200) {
-          let key = response.data;
-          this.p = key.p;
-          this.e = key.kpub;
-          this.d = key.kpriv;
-
-          console.log(key);
-        }
+      return new Promise((resolve) => {
+        setTimeout(function () {
+          api.runAlgorithm(req, i).then((response) => {
+            let time = response ? response.data : null;
+            if (time) me.chartData.datasets[ds].data[idx] = time;
+            else me.chartData.datasets[ds].data[idx] = 0;
+            resolve(time);
+          });
+        }, i * 50);
       });
+    },
+    async setupDataset() {
+      const asyncFunctions = [
+        this.setBruteForce(),
+        this.setBabyStepData(),
+        this.setDhPollardRho(),
+      ];
+      await Promise.all(asyncFunctions);
+    },
+    async solveRsa() {
+      const asyncFunctions = [
+        this.setRsaBruteForce(),
+        this.setRsaPollardRho(),
+        this.setFermats(),
+      ];
+      await Promise.all(asyncFunctions);
+    },
+    resetData() {
+      this.chartData = {
+        labels: ["4", "8", "12", "16", "20", "24", "28", "32"],
+        datasets: [
+          {
+            label: "Brute Force",
+            data: [],
+          },
+          {
+            label: "Baby Step Giant Step",
+            data: [],
+          },
+          {
+            label: "Pollard's Rho",
+            data: [],
+          },
+        ],
+      };
     },
   },
   components: {
     AlgorithmButton,
+    AlgorithmSelectVue,
+    DhKeyGeneratorVue,
     LineChartVue,
+    NavBar,
     Prism,
+    RsaKeyGeneratorVue,
+    SystemStatsVue,
   },
-  watch: {},
+  watch: {
+    selectedAlg(newAlg, oldAlg) {
+      if (newAlg == "diffieAlg") {
+        this.chartData = this.diffieDataset;
+      } else if (newAlg == "rsaAlg") {
+        this.buttons = this.rsaButttons;
+        $("#" + this.buttons[0].id).addClass("active");
+        this.selectedCode = this.rsaBruteForce.value;
+        setTimeout(() => Prism.highlightAll(), 10); // hightlight the code changes
+        if (Object.keys(this.rsaDataset).length === 0) {
+          this.resetData();
+          this.chartData.labels = [
+            "4",
+            "8",
+            "12",
+            "16",
+            "20",
+            "24",
+            "28",
+            "32",
+            "36",
+            "40",
+            "44",
+            "48",
+            "52",
+            "56",
+            "60",
+            "64",
+          ];
+          this.chartData.datasets[1].label = "Fermat's Factorization";
+          this.solveRsa().then(() => {
+            this.rsaDataset = _.cloneDeep(this.chartData);
+          });
+        } else {
+          this.chartData = this.rsaDataset;
+        }
+      }
+    },
+  },
   mounted() {
     api.getStats().then((response) => {
       this.stats = response ? response.data : null;
@@ -276,9 +322,10 @@ export default {
         },
       ],
     };
-    this.setBabyStepData();
-    this.setBruteForce();
-    this.setPollardRho();
+    this.setupDataset().then(() => {
+      console.log("Diffie Dataset - DONE");
+      this.diffieDataset = _.cloneDeep(this.chartData);
+    });
   },
 };
 </script>
@@ -304,24 +351,6 @@ body {
   margin: auto;
   height: 100%;
   width: 100%;
-}
-
-.algselect {
-  /* padding-left: 0; */
-  margin-left: 0;
-  padding-left: 0;
-  border-radius: 0 !important;
-}
-
-.sysStat {
-  text-align: left !important;
-  /* background-color: #6c757d; */
-  border-radius: 0 !important;
-  margin-top: 25px;
-}
-
-.banner {
-  background: #296bd3;
 }
 
 .nopadding {
@@ -364,13 +393,6 @@ body {
   color: #fff;
   background-color: #6c757d;
   border-color: #6c757d;
-}
-
-.keyGen {
-  border-radius: 3px;
-  border: 1px solid #2c3e50;
-  background-color: whitesmoke;
-  margin-top: 25px;
 }
 
 .btn-check:checked + .btn,

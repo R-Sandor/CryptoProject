@@ -89,7 +89,7 @@ export default {
           y: {
             title: {
               display: true,
-              text: "Time",
+              text: "Time (milliseconds)",
             },
           },
         },

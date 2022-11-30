@@ -1,7 +1,7 @@
 package dev.findfirst.CryptoProjectFinal.crypto.diffiehellman;
 
-import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator.BigKeys;
 import dev.findfirst.CryptoProjectFinal.crypto.SolveTimer;
+import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DHKeyGenerator.DHKeys;
 import java.math.BigInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,14 +15,14 @@ import org.springframework.stereotype.Component;
 public class DiffieHellmanBruteForce implements SolveTimer {
 
   @Override
-  public long solveTime(BigKeys keys) {
+  public long solveTime(DHKeys keys) {
     long start = System.currentTimeMillis();
     String x = bruteForce(keys);
     log.debug("Key Found: {}", x);
     return System.currentTimeMillis() - start;
   }
 
-  public String bruteForce(BigKeys keys) {
+  public String bruteForce(DHKeys keys) {
     log.debug("a {}, b {}, p {}, privKey {}", keys.a(), keys.kpub(), keys.p(), keys.kpriv());
     BigInteger maxValue = keys.a().pow(keys.bitsize());
     log.debug("maxValue {}", maxValue);

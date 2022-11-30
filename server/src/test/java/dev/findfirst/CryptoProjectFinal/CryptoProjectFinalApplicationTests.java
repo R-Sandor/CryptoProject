@@ -1,21 +1,23 @@
 package dev.findfirst.CryptoProjectFinal;
 
+import static dev.findfirst.CryptoProjectFinal.crypto.CryptoUtils.fastMod;
+import static dev.findfirst.CryptoProjectFinal.crypto.CryptoUtils.genRandomInBitSize;
+import static dev.findfirst.CryptoProjectFinal.crypto.CryptoUtils.primeTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import dev.findfirst.CryptoProjectFinal.crypto.diffiehellman.DHKeyGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import dev.findfirst.CryptoProjectFinal.crypto.KeyGenerator;
-
 @SpringBootTest
 @Slf4j
 class CryptoProjectFinalApplicationTests {
 
-  @Autowired KeyGenerator keyGen;
+  @Autowired DHKeyGenerator keyGen;
 
   @Test
   void numInRangeOfBits() {
@@ -24,24 +26,24 @@ class CryptoProjectFinalApplicationTests {
         () -> {
           long max = 2 << keySize - 1;
           long min = (2 << keySize - 2) + 1;
-          long genKey = keyGen.genRandomInBitSize(keySize);
+          long genKey = genRandomInBitSize(keySize);
           return min <= genKey && genKey <= max;
         });
   }
 
   @Test
-  void primeTest() {
-    assertFalse(keyGen.primeTest(15, 4));
-    assertTrue(keyGen.primeTest(11, 4));
+  void TestPrime() {
+    assertFalse(primeTest(15, 4));
+    assertTrue(primeTest(11, 4));
   }
 
   @Test
   void findPrimeForBitSize() {
-    long priKey = keyGen.genRandomInBitSize(16);
-    while (!keyGen.primeTest(priKey, 4)) {
-      priKey = keyGen.genRandomInBitSize(16);
+    long priKey = genRandomInBitSize(16);
+    while (!primeTest(priKey, 4)) {
+      priKey = genRandomInBitSize(16);
     }
-    assertTrue(keyGen.primeTest(priKey, 4));
+    assertTrue(primeTest(priKey, 4));
   }
 
   @Test
@@ -50,6 +52,6 @@ class CryptoProjectFinalApplicationTests {
     int p = 65521;
     int alpha = 5;
 
-    assertEquals(39327, keyGen.fastMod(alpha, priKey, p));
+    assertEquals(39327, fastMod(alpha, priKey, p));
   }
 }
