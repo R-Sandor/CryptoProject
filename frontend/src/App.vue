@@ -148,7 +148,7 @@ export default {
         idx++;
       }
       await Promise.all(promiseArray);
-      return Promise.resolve("SetPollardRho done");
+      return Promise.resolve("SetRsaPollardRho - done");
     },
     async setFermats() {
       let idx = 0;
@@ -158,7 +158,7 @@ export default {
         idx++;
       }
       await Promise.all(promiseArray);
-      return Promise.resolve("SetPollardRho done");
+      return Promise.resolve("SetFermats - done");
     },
     async setRsaBruteForce() {
       let idx = 0;
@@ -168,7 +168,7 @@ export default {
         idx++;
       }
       await Promise.all(promiseArray);
-      return Promise.resolve("SetPollardRho done");
+      return Promise.resolve("SetRsaBrute - done");
     },
     buildData(req, ds, i, idx) {
       const me = this;
@@ -194,9 +194,12 @@ export default {
       await Promise.all(asyncFunctions);
     },
     async solveRsa() {
-      this.setRsaBruteForce();
-      this.setRsaPollardRho();
-      this.setFermats();
+      const asyncFunctions = [
+        this.setRsaBruteForce(),
+        this.setRsaPollardRho(),
+        this.setFermats(),
+      ];
+      await Promise.all(asyncFunctions);
     },
     resetData() {
       this.chartData = {
@@ -255,6 +258,7 @@ export default {
           ];
           this.chartData.datasets[1].label = "Fermat's Factorization";
           this.solveRsa().then(() => {
+            console.log("RSA Done");
             this.rsaDataset = _.cloneDeep(this.chartData);
           });
         } else {
