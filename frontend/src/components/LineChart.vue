@@ -93,7 +93,7 @@ export default {
           y: {
             title: {
               display: true,
-              text: "Time",
+              text: "Time (milliseconds)",
             },
           },
         },
@@ -109,9 +109,6 @@ export default {
   methods: {
     mounted() {
       this.addPlugin(Colors);
-    },
-    test() {
-      console.log("here");
     },
   },
 };

@@ -18,7 +18,7 @@ export default {
   },
 
   runAlgorithm(req, i) {
-    return this.execute("GET", req + "/2/" + i);
+    return this.execute("GET", req + "/" + i);
   },
 
   getStats() {

@@ -78,6 +78,7 @@ export default {
       ],
       chartData: {},
       diffieDataset: {},
+      rsaDataset: {},
     };
   },
   computed: {},
@@ -113,7 +114,7 @@ export default {
       let idx = 0;
       const promiseArray = [];
       for (let i = 4; i <= 32; i += 4) {
-        promiseArray.push(this.buildData("dh/babyStep", 1, i, idx));
+        promiseArray.push(this.buildData("dh/babyStep/" + this.alpha, 1, i, idx));
         idx++;
       }
       await Promise.all(promiseArray);
@@ -123,17 +124,47 @@ export default {
       let idx = 0;
       const promiseArray = [];
       for (let i = 4; i <= 20; i += 4) {
-        promiseArray.push(this.buildData("dh/bf", 0, i, idx));
+        promiseArray.push(this.buildData("dh/bf/" + this.alpha, 0, i, idx));
         idx++;
       }
       await Promise.all(promiseArray);
       return Promise.resolve("SetBruteForce done");
     },
-    async setPollardRho() {
+    async setDhPollardRho() {
       let idx = 0;
       const promiseArray = [];
       for (let i = 4; i <= 32; i += 4) {
-        promiseArray.push(this.buildData("dh/pr", 2, i, idx));
+        promiseArray.push(this.buildData("dh/pr/" + this.alpha, 2, i, idx));
+        idx++;
+      }
+      await Promise.all(promiseArray);
+      return Promise.resolve("SetPollardRho done");
+    },
+    async setRsaPollardRho() {
+      let idx = 0;
+      const promiseArray = [];
+      for (let i = 4; i <= 64; i += 4) {
+        promiseArray.push(this.buildData("rsa/pr", 2, i, idx));
+        idx++;
+      }
+      await Promise.all(promiseArray);
+      return Promise.resolve("SetPollardRho done");
+    },
+    async setFermats() {
+      let idx = 0;
+      const promiseArray = [];
+      for (let i = 4; i <= 64; i += 4) {
+        promiseArray.push(this.buildData("rsa/fermats", 1, i, idx));
+        idx++;
+      }
+      await Promise.all(promiseArray);
+      return Promise.resolve("SetPollardRho done");
+    },
+    async setRsaBruteForce() {
+      let idx = 0;
+      const promiseArray = [];
+      for (let i = 4; i <= 20; i += 4) {
+        promiseArray.push(this.buildData("rsa/bf", 0, i, idx));
         idx++;
       }
       await Promise.all(promiseArray);
@@ -147,6 +178,7 @@ export default {
             let time = response ? response.data : null;
             console.log(idx);
             if (time) me.chartData.datasets[ds].data[idx] = time;
+            else me.chartData.datasets[ds].data[idx] = 0;
             console.log(time);
             resolve(time);
           });
@@ -157,10 +189,14 @@ export default {
       const asyncFunctions = [
         this.setBruteForce(),
         this.setBabyStepData(),
-        this.setPollardRho(),
+        this.setDhPollardRho(),
       ];
       await Promise.all(asyncFunctions);
-      // await this.setBruteForce();
+    },
+    async solveRsa() {
+      this.setRsaBruteForce();
+      this.setRsaPollardRho();
+      this.setFermats();
     },
     resetData() {
       this.chartData = {
@@ -192,7 +228,42 @@ export default {
     RsaKeyGeneratorVue,
     SystemStatsVue,
   },
-  watch: {},
+  watch: {
+    selectedAlg(newAlg, oldAlg) {
+      if (newAlg == "diffieAlg") {
+        this.chartData = this.diffieDataset;
+      } else if (newAlg == "rsaAlg") {
+        if (Object.keys(this.rsaDataset).length === 0) {
+          this.resetData();
+          this.chartData.labels = [
+            "4",
+            "8",
+            "12",
+            "16",
+            "20",
+            "24",
+            "28",
+            "32",
+            "36",
+            "40",
+            "44",
+            "48",
+            "52",
+            "56",
+            "60",
+            "64",
+          ];
+          this.chartData.datasets[1].label = "Fermat's Factorization";
+          this.solveRsa().then(() => {
+            this.rsaDataset = _.cloneDeep(this.chartData);
+          });
+        } else {
+          console.log("HERE");
+          this.chartData = this.rsaDataset;
+        }
+      }
+    },
+  },
   mounted() {
     api.getStats().then((response) => {
       this.stats = response ? response.data : null;
@@ -223,12 +294,6 @@ export default {
     this.setupDataset().then(() => {
       console.log("DONE DONE");
       this.diffieDataset = _.cloneDeep(this.chartData);
-      console.log(this.diffieDataset);
-      // setTimeout(() => (this.chartData.datasets = {}), 3000);
-      // LineChartVue.update();
-      // setTimeout(() => (this.chartData = this.diffieDataset), 6000);
-      // this.LineChartVue.removeData("");
-      console.log(this.$refs.line);
     });
   },
 };
