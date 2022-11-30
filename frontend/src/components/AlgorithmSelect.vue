@@ -13,13 +13,13 @@
     >
       RSA
     </a>
-    <a
+    <!-- <a
       id="eccAlg"
       @click="$emit('algSelect', 'ecc')"
       class="list-group-item list-group-item-action disabled"
     >
       Elliptic Curve</a
-    >
+    > -->
   </div>
 </template>
 <script>

@@ -382,12 +382,12 @@ body {
   top: -46px;
 }
 
-.list-group-item.active {
+/* .list-group-item.active {
   z-index: 2;
   color: whitesmoke;
   background-color: #6c757d;
   border-color: #6c757d;
-}
+} */
 .btn-outline-secondary.active {
   z-index: 2;
   color: #fff;
