@@ -45,12 +45,14 @@ import api from "./Api";
 import babyStepGaintStep from "raw-loader!./assets/BabyStepGiantStep.java";
 import dhBruteForce from "raw-loader!./assets/DiffieHellmanBruteForce.java";
 import DhKeyGeneratorVue from "./components/DhKeyGenerator.vue";
+import rsaFermats from "raw-loader!./assets/FermatsFactorization.java";
 import LineChartVue from "./components/LineChart.vue";
 import { clone, cloneDeep } from "lodash"; // Alternatively: Import just the clone methods from lodash
 import NavBar from "./components/NavBar.vue";
 import pollardRho from "raw-loader!./assets/PollardRho.java";
 import "prismjs/components/prism-java";
 import Prism from "prismjs";
+import rsaBruteForce from "raw-loader!./assets/RsaBruteForce.java";
 import RsaKeyGeneratorVue from "./components/RsaKeyGenerator.vue";
 import SystemStatsVue from "./components/SystemStats.vue";
 export default {
@@ -60,9 +62,10 @@ export default {
       normalizedSpeed: 0,
       memory: 0,
       stats: {},
-      test: "cool",
       dhBruteForce: { name: "bruteForce", value: dhBruteForce },
+      rsaBruteForce: { name: "rsaBruteForce", value: rsaBruteForce },
       babystep: { name: "babystep", value: babyStepGaintStep },
+      rsaFermats: { name: "fermats", value: rsaFermats },
       pollardRho: { name: "pollardRho", value: pollardRho },
       selectedCode: dhBruteForce,
       selectedAlg: "diffieAlg",
@@ -71,14 +74,24 @@ export default {
       d: "",
       alpha: 2,
       bitsize: 16,
-      buttons: [
-        { id: "btnForce", idx: 0, caption: "Brute Force", state: true },
-        { id: "btnBaby", idx: 1, caption: "Baby Step Gaint Step", state: false },
-        { id: "btnPollard", idx: 2, caption: "Pollard's Rho method", state: false },
-      ],
       chartData: {},
       diffieDataset: {},
       rsaDataset: {},
+      buttons: [
+        { id: "btnAlg1", idx: 0, caption: "Brute Force", state: true },
+        { id: "btnAlg2", idx: 1, caption: "Baby Step Gaint Step", state: false },
+        { id: "btnAlg3", idx: 2, caption: "Pollard's Rho method", state: false },
+      ],
+      diffieButtons: [
+        { id: "btnAlg1", idx: 0, caption: "Brute Force", state: true },
+        { id: "btnAlg2", idx: 1, caption: "Baby Step Gaint Step", state: false },
+        { id: "btnAlg3", idx: 2, caption: "Pollard's Rho method", state: false },
+      ],
+      rsaButttons: [
+        { id: "btnAlg1", idx: 0, caption: "RSA Brute Force", state: true },
+        { id: "btnAlg2", idx: 1, caption: "Fermats Factorization", state: false },
+        { id: "btnAlg3", idx: 2, caption: "Pollard's Rho method", state: false },
+      ],
     };
   },
   computed: {},
@@ -93,16 +106,30 @@ export default {
       this.buttons[1].state = false;
       this.buttons[2].state = false;
       this.buttons[buttonIdx].state = !this.buttons[buttonIdx].state;
-      switch (buttonIdx) {
-        case 0:
-          this.selectedCode = this.dhBruteForce.value;
-          break;
-        case 1:
-          this.selectedCode = this.babystep.value;
-          break;
-        case 2:
-          this.selectedCode = this.pollardRho.value;
-          break;
+      if (this.algSelect == "diffieAlg") {
+        switch (buttonIdx) {
+          case 0:
+            this.selectedCode = this.dhBruteForce.value;
+            break;
+          case 1:
+            this.selectedCode = this.babystep.value;
+            break;
+          case 2:
+            this.selectedCode = this.pollardRho.value;
+            break;
+        }
+      } else {
+        switch (buttonIdx) {
+          case 0:
+            this.selectedCode = this.rsaBruteForce.value;
+            break;
+          case 1:
+            this.selectedCode = this.rsaFermats.value;
+            break;
+          case 2:
+            this.selectedCode = this.pollardRho.value;
+            break;
+        }
       }
       $("#" + this.buttons[buttonIdx].id).addClass("active");
       // Need to give prism just a little bit of time to let the code load.
@@ -176,13 +203,11 @@ export default {
         setTimeout(function () {
           api.runAlgorithm(req, i).then((response) => {
             let time = response ? response.data : null;
-            console.log(idx);
             if (time) me.chartData.datasets[ds].data[idx] = time;
             else me.chartData.datasets[ds].data[idx] = 0;
-            console.log(time);
             resolve(time);
           });
-        }, i * 100);
+        }, i * 50);
       });
     },
     async setupDataset() {
@@ -236,6 +261,10 @@ export default {
       if (newAlg == "diffieAlg") {
         this.chartData = this.diffieDataset;
       } else if (newAlg == "rsaAlg") {
+        this.buttons = this.rsaButttons;
+        $("#" + this.buttons[0].id).addClass("active");
+        this.selectedCode = this.rsaBruteForce.value;
+        setTimeout(() => Prism.highlightAll(), 200); // highlight your code on mount
         if (Object.keys(this.rsaDataset).length === 0) {
           this.resetData();
           this.chartData.labels = [
@@ -258,11 +287,9 @@ export default {
           ];
           this.chartData.datasets[1].label = "Fermat's Factorization";
           this.solveRsa().then(() => {
-            console.log("RSA Done");
             this.rsaDataset = _.cloneDeep(this.chartData);
           });
         } else {
-          console.log("HERE");
           this.chartData = this.rsaDataset;
         }
       }
@@ -296,7 +323,7 @@ export default {
       ],
     };
     this.setupDataset().then(() => {
-      console.log("DONE DONE");
+      console.log("Diffie Dataset - DONE");
       this.diffieDataset = _.cloneDeep(this.chartData);
     });
   },
