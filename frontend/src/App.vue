@@ -264,7 +264,7 @@ export default {
         this.buttons = this.rsaButttons;
         $("#" + this.buttons[0].id).addClass("active");
         this.selectedCode = this.rsaBruteForce.value;
-        setTimeout(() => Prism.highlightAll(), 200); // highlight your code on mount
+        setTimeout(() => Prism.highlightAll(), 10); // hightlight the code changes
         if (Object.keys(this.rsaDataset).length === 0) {
           this.resetData();
           this.chartData.labels = [
