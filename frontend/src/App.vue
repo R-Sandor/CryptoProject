@@ -59,6 +59,8 @@ export default {
   name: "App",
   data() {
     return {
+      canceled: false,
+      solving: false,
       normalizedSpeed: 0,
       memory: 0,
       stats: {},
@@ -141,6 +143,7 @@ export default {
       let idx = 0;
       const promiseArray = [];
       for (let i = 4; i <= 32; i += 4) {
+        if (this.canceled) break;
         promiseArray.push(this.buildData("dh/babyStep/" + this.alpha, 1, i, idx));
         idx++;
       }
@@ -151,6 +154,7 @@ export default {
       let idx = 0;
       const promiseArray = [];
       for (let i = 4; i <= 20; i += 4) {
+        if (this.canceled) break;
         promiseArray.push(this.buildData("dh/bf/" + this.alpha, 0, i, idx));
         idx++;
       }
@@ -161,6 +165,7 @@ export default {
       let idx = 0;
       const promiseArray = [];
       for (let i = 4; i <= 32; i += 4) {
+        if (this.canceled) break;
         promiseArray.push(this.buildData("dh/pr/" + this.alpha, 2, i, idx));
         idx++;
       }
@@ -171,6 +176,7 @@ export default {
       let idx = 0;
       const promiseArray = [];
       for (let i = 4; i <= 64; i += 4) {
+        if (this.canceled) break;
         promiseArray.push(this.buildData("rsa/pr", 2, i, idx));
         idx++;
       }
@@ -181,6 +187,7 @@ export default {
       let idx = 0;
       const promiseArray = [];
       for (let i = 4; i <= 64; i += 4) {
+        if (this.canceled) break;
         promiseArray.push(this.buildData("rsa/fermats", 1, i, idx));
         idx++;
       }
@@ -191,6 +198,7 @@ export default {
       let idx = 0;
       const promiseArray = [];
       for (let i = 4; i <= 20; i += 4) {
+        if (this.canceled) break;
         promiseArray.push(this.buildData("rsa/bf", 0, i, idx));
         idx++;
       }
@@ -210,20 +218,24 @@ export default {
         }, i * 50);
       });
     },
-    async setupDataset() {
+    async solveDiffieHellman() {
+      this.solving = true;
       const asyncFunctions = [
         this.setBruteForce(),
         this.setBabyStepData(),
         this.setDhPollardRho(),
       ];
       await Promise.all(asyncFunctions);
+      this.solving = false;
     },
     async solveRsa() {
+      this.solving = true;
       const asyncFunctions = [
         this.setRsaBruteForce(),
         this.setRsaPollardRho(),
         this.setFermats(),
       ];
+      this.solving = false;
       await Promise.all(asyncFunctions);
     },
     resetData() {
@@ -258,7 +270,14 @@ export default {
   },
   watch: {
     selectedAlg(newAlg, oldAlg) {
+      if (this.solving) {
+        this.canceled = true;
+        this.solving = false;
+      }
+
       if (newAlg == "diffieAlg") {
+        $("#" + this.buttons[0].id).addClass("active");
+        this.buttons = this.diffieButtons;
         this.chartData = this.diffieDataset;
       } else if (newAlg == "rsaAlg") {
         this.buttons = this.rsaButttons;
@@ -322,7 +341,7 @@ export default {
         },
       ],
     };
-    this.setupDataset().then(() => {
+    this.solveDiffieHellman().then(() => {
       console.log("Diffie Dataset - DONE");
       this.diffieDataset = _.cloneDeep(this.chartData);
     });
